@@ -43,11 +43,11 @@ const STATUS_STYLE: Record<StepStatus, string> = {
 
 export function GenerationProgress({ detail }: { detail: KitDetail }) {
   const retry = useRetryKit();
-  const statuses = deriveStatuses(detail.events);
+  const failed = detail.status === "failed";
+  const statuses = deriveStatuses(detail.events, failed);
   const completed = MAIN_STEPS.filter(
     (step) => statuses.get(step)?.status === "done" || statuses.get(step)?.status === "skipped",
   ).length;
-  const failed = detail.status === "failed";
 
   return (
     <Card>
@@ -137,7 +137,7 @@ interface StepEntry {
   children: { step: string; message?: string }[];
 }
 
-function deriveStatuses(events: PipelineEvent[]): Map<string, StepEntry> {
+function deriveStatuses(events: PipelineEvent[], aborted: boolean): Map<string, StepEntry> {
   const statuses = new Map<string, StepEntry>();
 
   for (const event of events) {
@@ -154,6 +154,12 @@ function deriveStatuses(events: PipelineEvent[]): Map<string, StepEntry> {
     }
 
     statuses.set(parent, entry);
+  }
+
+  if (aborted) {
+    for (const entry of statuses.values()) {
+      if (entry.status === "running") entry.status = "failed";
+    }
   }
 
   return statuses;
