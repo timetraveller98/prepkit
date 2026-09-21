@@ -1,27 +1,35 @@
 {
-  "name": "project",
-  "version": "0.1.0",
+  "name": "prep-kit",
+  "version": "1.0.0",
   "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20.9"
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "dev": "concurrently -n api,web -c cyan,magenta \"npm:dev:api\" \"npm:dev:web\"",
+    "dev:api": "npm run dev --workspace @prepkit/api",
+    "dev:web": "npm run dev --workspace @prepkit/web",
+    "build": "npm run build --workspace @prepkit/web",
+    "start:api": "npm run start --workspace @prepkit/api",
+    "evaluate": "tsx packages/core/bin/evaluate.ts",
+    "fixtures": "tsx packages/core/bin/fixture-server.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit -p packages/core && tsc --noEmit -p apps/api && npm run typecheck --workspace @prepkit/web",
     "lint": "biome check",
     "format": "biome format --write"
   },
-  "dependencies": {
-    "next": "16.3.5",
-    "react": "19.2.8",
-    "react-dom": "19.2.8"
-  },
   "devDependencies": {
     "@biomejs/biome": "2.4.2",
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "babel-plugin-react-compiler": "1.0.0",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "@types/node": "^22.10.2",
+    "concurrently": "^9.1.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^4.1.11"
   }
 }
