@@ -10,6 +10,7 @@ import type { LlmClient } from "../llm/client.ts";
 import { createLlmClient } from "../llm/index.ts";
 import {
   CompanySiteUnreachableError,
+  type CrawledPage,
   type CrawlResult,
   crawlCompanySite,
 } from "../retrieval/crawler.ts";
@@ -63,10 +64,26 @@ export interface GenerateKitInput {
   maxCoveragePasses?: number;
 }
 
+export interface ResearchSnapshot {
+  pages: CrawledPage[];
+  hiring: HiringProcessResult;
+}
+
 export interface KitGenerationResult {
   kit: Kit;
   events: PipelineEvent[];
   usage: { calls: number; inputTokens: number; outputTokens: number };
+  research: ResearchSnapshot;
+}
+
+const SNAPSHOT_PAGE_LIMIT = 6;
+const SNAPSHOT_TEXT_LIMIT = 6000;
+
+export function compactPages(pages: CrawledPage[]): CrawledPage[] {
+  return [...pages]
+    .sort((a, b) => b.score - a.score)
+    .slice(0, SNAPSHOT_PAGE_LIMIT)
+    .map((page) => ({ ...page, text: page.text.slice(0, SNAPSHOT_TEXT_LIMIT) }));
 }
 
 const DEFAULT_MAX_COVERAGE_PASSES = 3;
@@ -432,7 +449,12 @@ export async function generateKit(input: GenerateKitInput): Promise<KitGeneratio
   }
   emit("validate", "completed");
 
-  return { kit: validation.kit, events, usage: llm.usage };
+  return {
+    kit: validation.kit,
+    events,
+    usage: llm.usage,
+    research: { pages: compactPages(crawl?.pages ?? []), hiring },
+  };
 }
 
 function groupGapsByCategory(requirements: Requirement[]): Map<QuestionCategory, Requirement[]> {
