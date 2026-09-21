@@ -1,5 +1,6 @@
 import { initialKitState, LlmClient } from "@prepkit/core";
 import type { Express } from "express";
+import jwt from "jsonwebtoken";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
 import request from "supertest";
@@ -170,6 +171,55 @@ describe("authentication", () => {
       .get("/api/auth/me")
       .set("Cookie", ["prepkit_session=not-a-jwt"]);
     expect(response.status).toBe(401);
+  });
+});
+
+describe("bearer tokens", () => {
+  it("accepts a token minted by the web server for a signed-in user", async () => {
+    const cookies = await signIn();
+    const me = await request(app).get("/api/auth/me").set("Cookie", cookies);
+    const token = jwt.sign({ email: CREDENTIALS.email }, "test-secret-that-is-long-enough", {
+      subject: me.body.user.id,
+      expiresIn: "5m",
+    });
+
+    const response = await request(app).get("/api/kits").set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(200);
+    expect(response.body.kits).toEqual([]);
+  });
+
+  it("rejects a token signed with the wrong secret", async () => {
+    const token = jwt.sign({ email: CREDENTIALS.email }, "a-completely-different-secret", {
+      subject: "000000000000000000000000",
+      expiresIn: "5m",
+    });
+
+    const response = await request(app).get("/api/kits").set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(401);
+  });
+
+  it("rejects an expired token", async () => {
+    const token = jwt.sign({ email: CREDENTIALS.email }, "test-secret-that-is-long-enough", {
+      subject: "000000000000000000000000",
+      expiresIn: "-1s",
+    });
+
+    const response = await request(app).get("/api/kits").set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(401);
+  });
+
+  it("verifies credentials without issuing a cookie, for the web server to call", async () => {
+    await signIn();
+
+    const good = await request(app).post("/api/auth/verify").send(CREDENTIALS);
+    expect(good.status).toBe(200);
+    expect(good.body.user.email).toBe(CREDENTIALS.email);
+    expect(good.headers["set-cookie"]).toBeUndefined();
+
+    const bad = await request(app)
+      .post("/api/auth/verify")
+      .send({ ...CREDENTIALS, password: "wrong-but-long-enough" });
+    expect(bad.status).toBe(401);
   });
 });
 
