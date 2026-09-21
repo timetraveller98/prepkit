@@ -34,7 +34,7 @@ export function Providers({ children }: { children: ReactNode }) {
             position="bottom-right"
             toastOptions={{
               className:
-                "!bg-[var(--surface-raised)] !text-[var(--text)] !border !border-[var(--border)] !rounded-xl",
+                "!bg-[var(--surface-raised)] !text-[var(--ink)] !border !border-[var(--line)] !rounded-xl",
             }}
           />
         </TooltipProvider>
