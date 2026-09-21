@@ -110,4 +110,35 @@ describe("topicLabel", () => {
     expect(topicLabel("Strong experience in distributed systems")).toBe("distributed systems");
     expect(topicLabel("Ability to mentor junior engineers")).toBe("mentor junior engineers");
   });
+
+  it("keeps a short requirement whole", () => {
+    expect(topicLabel("Retail or supply chain experience")).toBe(
+      "Retail or supply chain experience",
+    );
+    expect(topicLabel("Experience building and monitoring scheduled data pipelines")).toBe(
+      "Experience building and monitoring scheduled data pipelines",
+    );
+  });
+
+  it("stops at the first clause rather than running into a qualifier", () => {
+    expect(
+      topicLabel("Strong experience with PostgreSQL, including schema design under load"),
+    ).toBe("PostgreSQL");
+    expect(topicLabel("8+ years in infrastructure, at least 3 of them on Kubernetes")).toBe(
+      "infrastructure",
+    );
+  });
+
+  it("never ends on a dangling preposition or article", () => {
+    const labels = [
+      "3+ years with Python and SQL in a production data environment running nightly",
+      "Comfort talking directly to non-technical stakeholders about forecast accuracy",
+      "Demonstrated ownership of an on-call rotation and its incident review process",
+    ].map(topicLabel);
+
+    for (const label of labels) {
+      expect(label.length).toBeGreaterThan(0);
+      expect(label).not.toMatch(/\b(in|on|at|for|with|of|to|a|an|the|and|or)$/i);
+    }
+  });
 });

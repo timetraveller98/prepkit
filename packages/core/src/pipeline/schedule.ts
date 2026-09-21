@@ -205,6 +205,26 @@ function describeFocus(
 const TOPIC_NOISE =
   /^(?:\d+\+?\s*(?:-\s*\d+\s*)?years?(?:\s+of)?(?:\s+(?:hands[- ]on\s+)?experience)?(?:\s+(?:with|in|using|on|of))?|strong|proven|demonstrated|solid|deep|excellent|experience\s+(?:with|in|of)|ability\s+to|familiarity\s+with|working\s+knowledge\s+of|comfortable\s+with|expertise\s+in)\s+/i;
 
+const QUALIFIER_WORDS = new Set([
+  "in",
+  "on",
+  "at",
+  "for",
+  "with",
+  "under",
+  "from",
+  "to",
+  "of",
+  "about",
+  "across",
+  "within",
+  "including",
+  "using",
+  "through",
+]);
+const TRAILING_WORDS = new Set([...QUALIFIER_WORDS, "and", "or", "a", "an", "the"]);
+const TOPIC_MAX_WORDS = 8;
+
 export function topicLabel(text: string): string {
   let cleaned = text.trim();
   for (let pass = 0; pass < 3; pass += 1) {
@@ -212,12 +232,25 @@ export function topicLabel(text: string): string {
     if (next === cleaned) break;
     cleaned = next;
   }
-  const words = cleaned
-    .replace(/[.,;:]+$/g, "")
+
+  const clause = cleaned.split(/[,;:(]/)[0] ?? cleaned;
+  const words = clause
+    .replace(/[.\s]+$/g, "")
     .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 5);
-  return words.join(" ");
+    .filter(Boolean);
+
+  let kept = words;
+  if (words.length > TOPIC_MAX_WORDS) {
+    const breakpoints = words
+      .map((word, index) => (QUALIFIER_WORDS.has(word.toLowerCase()) ? index : -1))
+      .filter((index) => index > 1 && index <= TOPIC_MAX_WORDS);
+    kept = words.slice(0, breakpoints.at(-1) ?? TOPIC_MAX_WORDS);
+  }
+
+  const trimmed = [...kept];
+  while (trimmed.length > 1 && TRAILING_WORDS.has((trimmed.at(-1) ?? "").toLowerCase()))
+    trimmed.pop();
+  return trimmed.join(" ");
 }
 
 export function scheduleCoversRequirements(
