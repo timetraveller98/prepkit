@@ -61,6 +61,18 @@ export function createAuthRouter(sessions: SessionIssuer, attemptsPerWindow: num
     response.json({ user: session });
   });
 
+  router.post("/verify", attemptLimiter, async (request, response) => {
+    const { email, password } = parseBody(credentialsSchema, request);
+
+    const user = await UserModel.findOne({ email });
+    const matches = user ? await bcrypt.compare(password, user.passwordHash) : false;
+    if (!user || !matches) {
+      throw new ApiError(401, "INVALID_CREDENTIALS", "that email and password do not match");
+    }
+
+    response.json({ user: { id: user._id.toString(), email: user.email } });
+  });
+
   router.post("/logout", (_request, response) => {
     sessions.clear(response);
     response.status(204).end();

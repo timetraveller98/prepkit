@@ -41,7 +41,7 @@ export function createSessionIssuer(env: Env) {
     },
 
     read(request: Request): SessionUser | null {
-      const token = request.cookies?.[SESSION_COOKIE];
+      const token = bearerToken(request) ?? request.cookies?.[SESSION_COOKIE];
       if (typeof token !== "string" || token.length === 0) return null;
       try {
         const payload = jwt.verify(token, env.JWT_SECRET);
@@ -55,6 +55,13 @@ export function createSessionIssuer(env: Env) {
 }
 
 export type SessionIssuer = ReturnType<typeof createSessionIssuer>;
+
+function bearerToken(request: Request): string | null {
+  const header = request.headers.authorization;
+  if (typeof header !== "string") return null;
+  const [scheme, value] = header.split(" ");
+  return scheme?.toLowerCase() === "bearer" && value ? value : null;
+}
 
 export function attachUser(sessions: SessionIssuer) {
   return (request: Request, _response: Response, next: NextFunction): void => {
