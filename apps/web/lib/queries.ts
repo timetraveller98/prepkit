@@ -2,7 +2,7 @@
 
 import { type QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
-import { ApiRequestError, apiFetch, jsonBody } from "./api";
+import { apiFetch, jsonBody } from "./api";
 import type {
   Flashcard,
   KitDetail,
@@ -17,50 +17,19 @@ import type {
 } from "./types";
 
 export const queryKeys = {
-  session: ["session"] as const,
   kits: ["kits"] as const,
   kit: (id: string) => ["kit", id] as const,
   practice: (id: string) => ["practice", id] as const,
   readiness: (id: string) => ["readiness", id] as const,
 };
 
-export function useSession() {
-  return useQuery({
-    queryKey: queryKeys.session,
-    queryFn: async () => {
-      try {
-        const data = await apiFetch<{ user: SessionUser }>("/auth/me");
-        return data.user;
-      } catch (error) {
-        if (error instanceof ApiRequestError && error.isAuthFailure) return null;
-        throw error;
-      }
-    },
-    staleTime: 60_000,
-    retry: false,
-  });
-}
-
-export function useSignIn(mode: "login" | "register") {
-  const queryClient = useQueryClient();
+export function useRegister() {
   return useMutation({
     mutationFn: (credentials: { email: string; password: string }) =>
-      apiFetch<{ user: SessionUser }>(`/auth/${mode}`, {
+      apiFetch<{ user: SessionUser }>("/auth/register", {
         method: "POST",
         ...jsonBody(credentials),
       }),
-    onSuccess: (data) => {
-      queryClient.setQueryData(queryKeys.session, data.user);
-      void queryClient.invalidateQueries({ queryKey: queryKeys.kits });
-    },
-  });
-}
-
-export function useSignOut() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: () => apiFetch<void>("/auth/logout", { method: "POST" }),
-    onSuccess: () => queryClient.clear(),
   });
 }
 

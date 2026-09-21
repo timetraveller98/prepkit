@@ -1,13 +1,11 @@
+import { resolve } from "node:path";
 import type { NextConfig } from "next";
 
-const apiOrigin = process.env.API_ORIGIN ?? "http://localhost:4000";
+loadRepositoryEnv();
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
   transpilePackages: ["@prepkit/core"],
-  async rewrites() {
-    return [{ source: "/api/:path*", destination: `${apiOrigin}/api/:path*` }];
-  },
   async headers() {
     return [
       {
@@ -21,5 +19,13 @@ const nextConfig: NextConfig = {
     ];
   },
 };
+
+function loadRepositoryEnv() {
+  try {
+    process.loadEnvFile(resolve(process.cwd(), "../../.env"));
+  } catch {
+    return;
+  }
+}
 
 export default nextConfig;

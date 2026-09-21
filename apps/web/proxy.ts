@@ -1,30 +1,27 @@
-import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
+import NextAuth from "next-auth";
+import { authConfig, PUBLIC_ROUTES } from "./auth.config";
 
-const SESSION_COOKIE = "prepkit_session";
-const PUBLIC_PATHS = new Set(["/login", "/register"]);
+const { auth } = NextAuth(authConfig);
 
-export function proxy(request: NextRequest) {
+export default auth((request) => {
+  const signedIn = Boolean(request.auth?.user);
   const { pathname, search } = request.nextUrl;
-  const signedIn = request.cookies.has(SESSION_COOKIE);
 
-  if (!signedIn && !PUBLIC_PATHS.has(pathname)) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    url.search = pathname === "/" ? "" : `?next=${encodeURIComponent(pathname + search)}`;
-    return NextResponse.redirect(url);
+  if (PUBLIC_ROUTES.has(pathname)) {
+    if (!signedIn) return NextResponse.next();
+    return NextResponse.redirect(new URL("/kits", request.nextUrl));
   }
 
-  if (signedIn && PUBLIC_PATHS.has(pathname)) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/kits";
-    url.search = "";
+  if (!signedIn) {
+    const url = new URL("/login", request.nextUrl);
+    if (pathname !== "/") url.searchParams.set("next", `${pathname}${search}`);
     return NextResponse.redirect(url);
   }
 
   return NextResponse.next();
-}
+});
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|.*\\.svg).*)"],
+  matcher: ["/((?!api|backend|_next/static|_next/image|favicon.ico|.*\\.svg).*)"],
 };

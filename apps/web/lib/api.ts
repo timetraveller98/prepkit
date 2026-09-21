@@ -19,7 +19,7 @@ export class ApiRequestError extends Error {
 export async function apiFetch<TResult>(path: string, init: RequestInit = {}): Promise<TResult> {
   let response: Response;
   try {
-    response = await fetch(`/api${path}`, {
+    response = await fetch(`/backend${path}`, {
       credentials: "include",
       headers: init.body ? { "content-type": "application/json", ...init.headers } : init.headers,
       ...init,

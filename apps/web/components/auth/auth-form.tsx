@@ -3,12 +3,13 @@
 import { Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { signIn } from "next-auth/react";
 import { type FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ErrorState } from "@/components/ui/feedback";
 import { Field, Input } from "@/components/ui/field";
 import { ApiRequestError } from "@/lib/api";
-import { useSignIn } from "@/lib/queries";
+import { useRegister } from "@/lib/queries";
 
 const COPY = {
   login: {
@@ -33,13 +34,15 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
   const copy = COPY[mode];
   const router = useRouter();
   const searchParams = useSearchParams();
-  const signIn = useSignIn(mode);
+  const register = useRegister();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({});
+  const [failure, setFailure] = useState<string | null>(null);
+  const [pending, setPending] = useState(false);
 
-  const submit = (event: FormEvent) => {
+  const submit = async (event: FormEvent) => {
     event.preventDefault();
 
     const errors: { email?: string; password?: string } = {};
@@ -48,18 +51,31 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
     setFieldErrors(errors);
     if (Object.keys(errors).length > 0) return;
 
-    signIn.mutate(
-      { email, password },
-      {
-        onSuccess: () => {
-          const next = searchParams.get("next");
-          router.replace(next?.startsWith("/") ? next : "/kits");
-        },
-      },
-    );
-  };
+    setFailure(null);
+    setPending(true);
 
-  const failure = signIn.error;
+    try {
+      if (mode === "register") {
+        await register.mutateAsync({ email, password });
+      }
+
+      const result = await signIn("credentials", { email, password, redirect: false });
+      if (result?.error) {
+        setFailure("That email and password do not match.");
+        return;
+      }
+
+      const next = searchParams.get("next");
+      router.replace(next?.startsWith("/") ? next : "/kits");
+      router.refresh();
+    } catch (error) {
+      setFailure(
+        error instanceof ApiRequestError ? error.message : "Something went wrong, try again.",
+      );
+    } finally {
+      setPending(false);
+    }
+  };
 
   return (
     <div className="mx-auto flex w-full max-w-sm flex-col justify-center px-4 py-16">
@@ -74,16 +90,7 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
       <p className="mt-1 text-[13px] text-ink-muted">{copy.subheading}</p>
 
       <form onSubmit={submit} className="mt-6 space-y-4" noValidate>
-        {failure ? (
-          <ErrorState
-            title="That did not work"
-            message={
-              failure instanceof ApiRequestError
-                ? failure.message
-                : "Something went wrong, try again."
-            }
-          />
-        ) : null}
+        {failure ? <ErrorState title="That did not work" message={failure} /> : null}
 
         <Field label="Email" error={fieldErrors.email}>
           {(props) => (
@@ -122,7 +129,7 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
           variant="primary"
           size="lg"
           className="w-full justify-center"
-          loading={signIn.isPending}
+          loading={pending}
         >
           {copy.submit}
         </Button>
