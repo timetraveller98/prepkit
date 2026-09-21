@@ -26,6 +26,7 @@ editable, and practisable inside the app.
 - [Security](#security)
 - [Tests](#tests)
 - [Deployment](#deployment)
+- [Further documentation](#further-documentation)
 - [Environment variables](#environment-variables)
 - [Design decisions and trade-offs](#design-decisions-and-trade-offs)
 - [Known limitations](#known-limitations)
@@ -54,6 +55,7 @@ editable, and practisable inside the app.
 | Layer | Choice | Why |
 | --- | --- | --- |
 | Frontend | Next.js 16 (App Router), React 19, Tailwind CSS 4 | The preferred stack. Radix primitives underneath the components so keyboard and screen-reader behaviour is correct rather than approximated. |
+| Auth | NextAuth (Auth.js v5) in the web app, verified credentials in the API | Session handling, CSRF and cookie hardening are solved problems; v5 is the App Router version. The API stays stateless and takes a bearer token, so it is still usable and testable on its own. |
 | Backend | Node.js + Express 5 | The preferred stack. Express 5 rather than 4 for native async error propagation, which removes a whole class of unhandled-rejection wrappers. |
 | Database | MongoDB (Mongoose) | The preferred stack. A kit is one deeply nested document that is almost always read whole, which is exactly what a document store is good at. |
 | Language | TypeScript, strict, everywhere | |
@@ -208,10 +210,22 @@ apps/web                 Next.js 16
   proxy.ts               route protection
 ```
 
-The browser talks only to the web origin. `/api/*` is rewritten to the API service by
-Next, which keeps the session cookie first-party and sidesteps third-party cookie
-restrictions entirely. The API is still directly reachable — `GET /health` on the API
-origin — and still sends proper CORS headers for anyone calling it directly.
+The browser talks only to the web origin, and never holds a token for the API.
+
+```
+browser ──▶ Next.js
+              ├─ /api/auth/*        NextAuth: sign in, session, CSRF
+              ├─ /backend/*         reads the session, mints a 5-minute
+              │                     HS256 token, forwards to Express
+              └─ pages              proxy.ts guards them on the session
+                       │
+                       ▼
+                   Express API  ──▶  MongoDB
+```
+
+The API is still directly reachable — `GET /health` on the API origin — and still
+accepts its own session cookie, so it can be exercised and tested without the web app
+in front of it.
 
 ---
 
@@ -548,12 +562,14 @@ Everything fetched — and the pasted posting — is text nobody here wrote.
   tried something. The real defence is structural: every model response is parsed into a
   schema, ids are validated against ids the code minted, and coverage and scheduling are
   never delegated, so there is very little for an injected instruction to actually move.
-- **Application security.** Sessions are a signed JWT in an httpOnly, `secure`,
-  `sameSite` cookie; the browser never holds a readable token. Passwords are bcrypt at
-  12 rounds. Every kit route loads through an ownership check. Login and registration
-  are rate-limited separately from the rest of the API. Helmet sets the usual headers,
-  CORS is an explicit allow-list with credentials, and request bodies are capped and
-  schema-validated.
+- **Application security.** NextAuth owns the browser session: an encrypted, httpOnly,
+  `sameSite` cookie with CSRF protection on its own routes. The browser never holds a
+  token for the API. The web server mints a five-minute HS256 token per request when it
+  forwards to the API, so a leaked token is worth almost nothing and the API stays
+  stateless. Passwords are bcrypt at 12 rounds. Every kit route loads through an
+  ownership check. Login, registration and credential verification are rate-limited
+  separately from the rest of the API. Helmet sets the usual headers, CORS is an
+  explicit allow-list, and request bodies are capped and schema-validated.
 
 ---
 
@@ -563,7 +579,7 @@ Everything fetched — and the pasted posting — is text nobody here wrote.
 npm test
 ```
 
-87 tests. The ones worth having:
+91 tests. The ones worth having:
 
 - **Schedule allocation** — exact day count for 1, 2, 3, 5, 7, 14, 30 and 60 days; every
   question scheduled in both directions of the more-days/more-questions split;
@@ -586,6 +602,8 @@ npm test
 - **The builder** — an edited question, a pinned question and a hand-written question all
   survive a regeneration of their category while the untouched generated one is replaced.
 - **Ownership** — one account can never read, edit or delete another account's kit.
+- **Bearer tokens** — a token minted with the shared secret authenticates; one signed
+  with the wrong secret, or an expired one, does not.
 
 ---
 
@@ -628,7 +646,9 @@ Every variable is documented inline in `.env.example`. The short version:
 | `CORS_ORIGIN` | api | Comma-separated browser origins allowed to call the API with credentials. |
 | `GENERATION_CONCURRENCY` | api | How many kits may generate at once on one instance. |
 | `AUTH_ATTEMPTS_PER_WINDOW`, `API_REQUESTS_PER_MINUTE` | api | Abuse limits. |
-| `API_ORIGIN` | web | Where `/api/*` is rewritten to. Server-side only; it is never sent to the browser. |
+| `API_ORIGIN` | web | Where `/backend/*` is forwarded to. Server-side only; it is never sent to the browser. |
+| `AUTH_SECRET` | web | Signs and encrypts the NextAuth session cookie. `npx auth secret` generates one. |
+| `API_JWT_SECRET` | web | Must equal the API's `JWT_SECRET`. The web server signs a short-lived token with it when forwarding a request on a signed-in user's behalf. |
 
 ---
 
@@ -658,6 +678,14 @@ stripped copy.
 rebuilding is always safe and removes an entire class of dangling-reference bug. The
 cost is that editing a question's difficulty reshuffles the plan — which is arguably
 correct anyway.
+
+**NextAuth in the web app, bearer tokens into the API.** Rolling session handling by
+hand means owning CSRF, cookie flags, rotation and the sign-in surface. NextAuth solves
+that, but it lives in Next and the API must not depend on it — so the boundary is a
+plain short-lived HS256 token that Express verifies with a shared secret. The API never
+imports Auth.js, and its tests drive it directly with cookies or bearer tokens. The
+cost is one extra hop for every browser request; the benefit is that neither half has
+to know how the other authenticates.
 
 **`tsx` at runtime rather than a compile step.** One less build artefact, no
 cross-package build ordering, and the code that runs is the code in the repository.
@@ -692,3 +720,21 @@ yields little, which is a real limitation.
 - Requirement extraction quality is bounded by the model. `gemini-2.5-flash` is
   consistent on well-structured postings and less so on prose-heavy ones that bury
   requirements in paragraphs.
+
+---
+
+## Further documentation
+
+Longer-form documents live in [`docs/`](./docs):
+
+| Document | What is in it |
+| --- | --- |
+| [`docs/architecture.md`](./docs/architecture.md) | Every module, what it owns, and how a request moves through the system |
+| [`docs/pipeline.md`](./docs/pipeline.md) | Each research and generation step, its prompt contract, and the coverage loop |
+| [`docs/data-model.md`](./docs/data-model.md) | The kit structure, the editing-state sidecar, collections and indexes |
+| [`docs/api.md`](./docs/api.md) | Every endpoint, its payload, and its failure codes |
+| [`docs/frontend.md`](./docs/frontend.md) | Routes, component boundaries, state strategy, accessibility |
+| [`docs/security.md`](./docs/security.md) | Threat model and the control for each threat |
+| [`docs/operations.md`](./docs/operations.md) | Environment, deployment, runbook, troubleshooting |
+| [`docs/testing.md`](./docs/testing.md) | What is covered, what is not, and why |
+| [`docs/decisions.md`](./docs/decisions.md) | The decision log, with what was rejected and why |
