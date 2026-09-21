@@ -1,0 +1,32 @@
+[
+  {
+    "id": "case-01",
+    "jd": "Senior Backend Engineer\n\nAcme Freight is looking for a senior backend engineer to own our telemetry ingest pipeline.\n\nWhat you will do:\n- Own ingest, storage and replay for telemetry from several thousand trucks\n- Work directly with the dispatch team on what the data needs to answer\n\nRequirements:\n- 5+ years building production services in Node.js or a comparable runtime\n- Strong experience with PostgreSQL, including schema design under load\n- Experience mentoring junior engineers through code review\n\nBonus points for:\n- Familiarity with the logistics or freight domain\n- Exposure to event sourcing",
+    "company_url": "http://localhost:8099/acme/",
+    "days": 5
+  },
+  {
+    "id": "case-02",
+    "jd": "Data Engineer\n\nNorthwind Analytics turns retail point-of-sale data into demand forecasts for regional grocery chains.\n\nYou will need:\n- 3+ years with Python and SQL in a production data environment\n- Experience building and monitoring scheduled data pipelines\n- Comfort talking directly to non-technical stakeholders about forecast accuracy\n\nNice to have:\n- Retail or supply chain experience",
+    "company_url": "http://localhost:8099/northwind/",
+    "days": 3
+  },
+  {
+    "id": "case-03",
+    "jd": "Engineer wanted. Must be good with computers and available soon.",
+    "company_url": "http://localhost:8099/acme/",
+    "days": 1
+  },
+  {
+    "id": "case-04",
+    "jd": "Frontend Engineer\n\nWe are hiring a frontend engineer to rebuild our operations console.\n\nRequired:\n- 4+ years with React and TypeScript\n- Experience with accessibility beyond an audit checklist\n\nPreferred:\n- Design systems experience",
+    "company_url": "http://localhost:8099/missing/",
+    "days": 14
+  },
+  {
+    "id": "case-05",
+    "jd": "Staff Platform Engineer\n\nYou will own the deployment platform used by every team here.\n\nWe are looking for:\n- 8+ years in infrastructure, at least 3 of them on Kubernetes in production\n- Demonstrated ownership of an on-call rotation and its incident review process\n- Ability to influence engineering practice across teams without direct authority\n\nBonus:\n- Go\n- Experience running a multi-region control plane",
+    "company_url": "https://example.com/",
+    "days": 60
+  }
+]
