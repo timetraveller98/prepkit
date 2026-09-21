@@ -19,11 +19,7 @@ export interface SearchOutcome {
   attemptedQueries: string[];
 }
 
-export interface SearchEnv {
-  BRAVE_API_KEY?: string;
-  TAVILY_API_KEY?: string;
-  SEARCH_PROVIDER?: string;
-}
+export type SearchEnv = import("../env.ts").EnvSource;
 
 export interface PublicDiscussionOptions {
   company: string;

@@ -1,4 +1,4 @@
-import { createLlmClient, type LlmClient } from "@prepkit/core";
+import { createLlmClient, type EnvSource, type LlmClient } from "@prepkit/core";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, { type Express } from "express";
@@ -24,7 +24,7 @@ export function createApp({ env, queue, llm }: AppDependencies): Express {
 
   let cachedLlm = llm ?? null;
   const llmFactory = () => {
-    if (!cachedLlm) cachedLlm = createLlmClient(process.env);
+    if (!cachedLlm) cachedLlm = createLlmClient(process.env as EnvSource);
     return cachedLlm;
   };
 

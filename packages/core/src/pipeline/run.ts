@@ -7,6 +7,7 @@ import {
   validateKit,
 } from "../kit.ts";
 import type { LlmClient } from "../llm/client.ts";
+import { type EnvSource, currentEnv, readEnvNumber } from "../env.ts";
 import { createLlmClient } from "../llm/index.ts";
 import {
   CompanySiteUnreachableError,
@@ -56,7 +57,7 @@ export interface GenerateKitInput {
   companyUrl: string;
   daysAvailable: number;
   llm?: LlmClient;
-  env?: NodeJS.ProcessEnv;
+  env?: EnvSource;
   signal?: AbortSignal;
   onProgress?: PipelineReporter;
   crawlBudgetMs?: number;
@@ -89,7 +90,7 @@ export function compactPages(pages: CrawledPage[]): CrawledPage[] {
 const DEFAULT_MAX_COVERAGE_PASSES = 3;
 
 export async function generateKit(input: GenerateKitInput): Promise<KitGenerationResult> {
-  const env = input.env ?? process.env;
+  const env = input.env ?? currentEnv();
   const jobDescription = input.jobDescription.trim();
   if (jobDescription.length < 20) {
     throw new KitGenerationError(
@@ -105,8 +106,8 @@ export async function generateKit(input: GenerateKitInput): Promise<KitGeneratio
 
   const fetcher = new Fetcher({
     allowPrivateAddresses: allowPrivateAddresses(env),
-    timeoutMs: readNumber(env.FETCH_TIMEOUT_MS, 12_000),
-    maxBytes: readNumber(env.FETCH_MAX_BYTES, 2_000_000),
+    timeoutMs: readEnvNumber(env.FETCH_TIMEOUT_MS, 12_000),
+    maxBytes: readEnvNumber(env.FETCH_MAX_BYTES, 2_000_000),
   });
   const robots = new RobotsRegistry(fetcher);
 
@@ -133,7 +134,7 @@ export async function generateKit(input: GenerateKitInput): Promise<KitGeneratio
       robots,
       signal: input.signal,
       timeBudgetMs: input.crawlBudgetMs ?? 45_000,
-      maxPages: readNumber(env.CRAWL_MAX_PAGES, 12),
+      maxPages: readEnvNumber(env.CRAWL_MAX_PAGES, 12),
     });
     emit(
       "crawl-company-site",
@@ -169,7 +170,7 @@ export async function generateKit(input: GenerateKitInput): Promise<KitGeneratio
         roleTitle: extraction.roleTitle,
         fetcher,
         robots,
-        env: env as Record<string, string | undefined>,
+        env,
         signal: input.signal,
       }),
       input.searchBudgetMs ?? 30_000,
@@ -510,7 +511,7 @@ export function deriveCompanyName(companyUrl: string): string {
   }
 }
 
-export function allowPrivateAddresses(env: NodeJS.ProcessEnv): boolean {
+export function allowPrivateAddresses(env: EnvSource): boolean {
   if (env.ALLOW_PRIVATE_URLS === "true") return true;
   if (env.ALLOW_PRIVATE_URLS === "false") return false;
   return env.NODE_ENV !== "production";
@@ -541,7 +542,3 @@ function describe(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
 }
 
-function readNumber(value: string | undefined, fallback: number): number {
-  const parsed = Number.parseInt(value ?? "", 10);
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
-}

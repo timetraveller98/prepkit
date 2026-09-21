@@ -318,11 +318,20 @@ async function createKit(
 
   return KitModel.create({
     userId,
-    title: kitTitle("", new URL(companyUrl).hostname.replace(/^www\./, "")),
+    title: provisionalTitle(input.jobDescription, companyUrl),
     companyUrl,
     jobDescription: input.jobDescription,
     daysAvailable: input.daysAvailable,
     fingerprint: fingerprintFor(userId, input.jobDescription, input.companyUrl),
     status: "queued",
   });
+}
+
+export function provisionalTitle(jobDescription: string, companyUrl: string): string {
+  const firstLine = jobDescription
+    .split("\n")
+    .map((line) => line.trim())
+    .find((line) => line.length > 2);
+  const host = new URL(companyUrl).hostname.replace(/^www\./, "");
+  return kitTitle(firstLine ? firstLine.slice(0, 80) : "Untitled role", host);
 }

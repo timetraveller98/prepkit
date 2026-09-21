@@ -1,10 +1,12 @@
 import { EventEmitter } from "node:events";
 import {
   createLlmClient,
+  type EnvSource,
   generateKit,
   initialKitState,
   KitGenerationError,
   type LlmClient,
+  MissingCredentialsError,
   type PipelineEvent,
 } from "@prepkit/core";
 import { KitModel } from "../db/models/kit.ts";
@@ -14,7 +16,7 @@ const MAX_STORED_EVENTS = 80;
 export interface QueueOptions {
   concurrency: number;
   llm?: LlmClient;
-  env?: NodeJS.ProcessEnv;
+  env?: EnvSource;
 }
 
 export interface KitStreamMessage {
@@ -159,7 +161,7 @@ export class GenerationQueue {
   }
 
   private client(): LlmClient {
-    if (!this.llm) this.llm = createLlmClient(this.options.env ?? process.env);
+    if (!this.llm) this.llm = createLlmClient(this.options.env ?? (process.env as EnvSource));
     return this.llm;
   }
 
@@ -175,6 +177,9 @@ export function kitTitle(roleTitle: string, company: string): string {
 }
 
 function toFailure(error: unknown): { code: string; message: string } {
+  if (error instanceof MissingCredentialsError) {
+    return { code: "LLM_NOT_CONFIGURED", message: error.message };
+  }
   if (error instanceof KitGenerationError) return { code: error.code, message: error.message };
   const message = error instanceof Error ? error.message : String(error);
   if (/abort|cancel/i.test(message)) return { code: "CANCELLED", message };
