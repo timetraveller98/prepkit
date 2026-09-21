@@ -5,7 +5,7 @@ npm test          # everything
 npm run test:watch
 ```
 
-106 tests, 12 files, about 18 seconds. No API key, no network, no installed database —
+106 tests, 11 files, about 18 seconds. No API key, no network, no installed database —
 `mongodb-memory-server` provides MongoDB and a stubbed provider stands in for the model.
 
 ## What is covered, and why it was chosen
