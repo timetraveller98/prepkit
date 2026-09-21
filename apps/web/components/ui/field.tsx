@@ -10,10 +10,7 @@ const CONTROL_STYLES =
 
 export function Label({ className, ...props }: ComponentProps<typeof LabelPrimitive.Root>) {
   return (
-    <LabelPrimitive.Root
-      className={cn("text-[13px] font-medium text-ink", className)}
-      {...props}
-    />
+    <LabelPrimitive.Root className={cn("text-[13px] font-medium text-ink", className)} {...props} />
   );
 }
 
@@ -22,7 +19,9 @@ export function Input({ className, ...props }: ComponentProps<"input">) {
 }
 
 export function Textarea({ className, ...props }: ComponentProps<"textarea">) {
-  return <textarea className={cn(CONTROL_STYLES, "resize-y leading-relaxed", className)} {...props} />;
+  return (
+    <textarea className={cn(CONTROL_STYLES, "resize-y leading-relaxed", className)} {...props} />
+  );
 }
 
 export function Select({ className, children, ...props }: ComponentProps<"select">) {
@@ -37,7 +36,11 @@ export interface FieldProps {
   label: string;
   hint?: ReactNode;
   error?: string | null;
-  children: (props: { id: string; "aria-describedby": string | undefined; "aria-invalid": boolean }) => ReactNode;
+  children: (props: {
+    id: string;
+    "aria-describedby": string | undefined;
+    "aria-invalid": boolean;
+  }) => ReactNode;
 }
 
 export function Field({ label, hint, error, children }: FieldProps) {

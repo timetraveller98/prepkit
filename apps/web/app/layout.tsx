@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import { Providers } from "@/components/providers";
 import "./globals.css";
 
@@ -24,10 +25,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full`}
     >
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
-      </head>
       <body className="flex min-h-full flex-col font-sans">
+        <Script id="prepkit-theme" strategy="beforeInteractive">
+          {THEME_SCRIPT}
+        </Script>
         <a href="#main" className="skip-link">
           Skip to content
         </a>

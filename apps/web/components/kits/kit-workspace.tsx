@@ -1,8 +1,8 @@
 "use client";
 
+import { AlertTriangle, ChevronLeft, Play } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { AlertTriangle, ChevronLeft, Play } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ErrorState, Skeleton } from "@/components/ui/feedback";
@@ -109,7 +109,9 @@ export function KitWorkspace({ kitId }: { kitId: string }) {
       ) : (
         <Tabs
           value={TABS.some((entry) => entry.value === tab) ? tab : "overview"}
-          onValueChange={(value) => router.replace(`/kits/${kitId}?tab=${value}`, { scroll: false })}
+          onValueChange={(value) =>
+            router.replace(`/kits/${kitId}?tab=${value}`, { scroll: false })
+          }
           className="space-y-5"
         >
           <TabsList>

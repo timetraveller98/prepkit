@@ -1,12 +1,12 @@
 "use client";
 
+import { Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Sparkles } from "lucide-react";
 import { type FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Field, Input } from "@/components/ui/field";
 import { ErrorState } from "@/components/ui/feedback";
+import { Field, Input } from "@/components/ui/field";
 import { ApiRequestError } from "@/lib/api";
 import { useSignIn } from "@/lib/queries";
 
@@ -53,7 +53,7 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
       {
         onSuccess: () => {
           const next = searchParams.get("next");
-          router.replace(next && next.startsWith("/") ? next : "/kits");
+          router.replace(next?.startsWith("/") ? next : "/kits");
         },
       },
     );
@@ -117,7 +117,13 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
           )}
         </Field>
 
-        <Button type="submit" variant="primary" size="lg" className="w-full justify-center" loading={signIn.isPending}>
+        <Button
+          type="submit"
+          variant="primary"
+          size="lg"
+          className="w-full justify-center"
+          loading={signIn.isPending}
+        >
           {copy.submit}
         </Button>
       </form>

@@ -4,8 +4,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 import { useState } from "react";
 import { Toaster } from "sonner";
-import { ApiRequestError } from "@/lib/api";
 import { TooltipProvider } from "@/components/ui/overlays";
+import { ApiRequestError } from "@/lib/api";
 
 export function Providers({ children }: { children: ReactNode }) {
   const [queryClient] = useState(

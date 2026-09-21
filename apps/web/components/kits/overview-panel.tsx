@@ -135,8 +135,8 @@ export function OverviewPanel({ detail }: { detail: KitDetail }) {
               <p className="flex items-start gap-2 text-[13px] leading-relaxed text-ink-muted">
                 <Info className="mt-0.5 size-4 shrink-0 text-ink-faint" />
                 No hiring or interview-process page was found on their site, and public discussion
-                turned up nothing usable. Rather than guess, this kit is built from the posting and the
-                company brief alone.
+                turned up nothing usable. Rather than guess, this kit is built from the posting and
+                the company brief alone.
               </p>
             )}
           </CardBody>
@@ -194,7 +194,10 @@ export function OverviewPanel({ detail }: { detail: KitDetail }) {
               <ul className="space-y-2 text-[13px] leading-relaxed text-ink-muted">
                 {kit.notes.map((note) => (
                   <li key={note} className="flex gap-2">
-                    <span aria-hidden className="mt-1.5 size-1 shrink-0 rounded-full bg-ink-faint" />
+                    <span
+                      aria-hidden
+                      className="mt-1.5 size-1 shrink-0 rounded-full bg-ink-faint"
+                    />
                     {note}
                   </li>
                 ))}

@@ -16,10 +16,7 @@ export class ApiRequestError extends Error {
   }
 }
 
-export async function apiFetch<TResult>(
-  path: string,
-  init: RequestInit = {},
-): Promise<TResult> {
+export async function apiFetch<TResult>(path: string, init: RequestInit = {}): Promise<TResult> {
   let response: Response;
   try {
     response = await fetch(`/api${path}`, {
@@ -37,7 +34,9 @@ export async function apiFetch<TResult>(
   const payload = text ? safeParse(text) : null;
 
   if (!response.ok) {
-    const error = (payload as { error?: { code?: string; message?: string; details?: unknown } } | null)?.error;
+    const error = (
+      payload as { error?: { code?: string; message?: string; details?: unknown } } | null
+    )?.error;
     throw new ApiRequestError(
       response.status,
       error?.code ?? "REQUEST_FAILED",

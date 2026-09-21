@@ -1,18 +1,18 @@
 "use client";
 
 import {
+  closestCenter,
   DndContext,
   type DragEndEvent,
   KeyboardSensor,
   PointerSensor,
-  closestCenter,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
 import { restrictToParentElement, restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import {
-  SortableContext,
   arrayMove,
+  SortableContext,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
@@ -21,8 +21,8 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Field, Select, Textarea } from "@/components/ui/field";
 import { EmptyState } from "@/components/ui/feedback";
+import { Field, Select, Textarea } from "@/components/ui/field";
 import { Menu, MenuContent, MenuItem, MenuSeparator, MenuTrigger } from "@/components/ui/menu";
 import { Dialog, DialogClose, DialogContent } from "@/components/ui/overlays";
 import {
@@ -77,11 +77,7 @@ export function QuestionsPanel({ detail }: { detail: KitDetail }) {
         />
       ))}
 
-      <AddQuestionDialog
-        detail={detail}
-        category={adding}
-        onClose={() => setAdding(null)}
-      />
+      <AddQuestionDialog detail={detail} category={adding} onClose={() => setAdding(null)} />
     </div>
   );
 }
@@ -131,7 +127,10 @@ function CategoryGroup({
     <section aria-labelledby={`questions-${category}`}>
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <h3 id={`questions-${category}`} className="text-sm font-semibold tracking-tight text-ink">
+          <h3
+            id={`questions-${category}`}
+            className="text-sm font-semibold tracking-tight text-ink"
+          >
             {CATEGORY_LABELS[category]}
           </h3>
           <Badge>{questions.length}</Badge>
@@ -217,9 +216,7 @@ function QuestionRow({ detail, question }: { detail: KitDetail; question: Questi
           </MenuTrigger>
           <MenuContent>
             <MenuItem
-              onSelect={() =>
-                pin.mutate({ questionId: question.id, pinned: !meta?.pinned })
-              }
+              onSelect={() => pin.mutate({ questionId: question.id, pinned: !meta?.pinned })}
             >
               {meta?.pinned ? <PinOff className="size-3.5" /> : <Pin className="size-3.5" />}
               {meta?.pinned ? "Unpin" : "Pin so regeneration keeps it"}
@@ -342,7 +339,10 @@ function AddQuestionDialog({
             )}
           </Field>
 
-          <Field label="Requirement it tests" hint="Linking it keeps the coverage check meaningful.">
+          <Field
+            label="Requirement it tests"
+            hint="Linking it keeps the coverage check meaningful."
+          >
             {(props) => (
               <Select
                 {...props}

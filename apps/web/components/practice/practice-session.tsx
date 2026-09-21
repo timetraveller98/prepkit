@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { ChevronLeft, Eye, RotateCcw, Sparkles } from "lucide-react";
+import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -40,7 +40,8 @@ export function PracticeSession({ kitId }: { kitId: string }) {
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.target instanceof HTMLElement && /input|textarea/i.test(event.target.tagName)) return;
+      if (event.target instanceof HTMLElement && /input|textarea/i.test(event.target.tagName))
+        return;
       if (!current) return;
 
       if (!revealed && (event.key === " " || event.key === "Enter")) {
@@ -195,7 +196,12 @@ export function PracticeSession({ kitId }: { kitId: string }) {
                 </p>
               </div>
             ) : (
-              <Button variant="secondary" size="lg" className="w-full justify-center" onClick={() => setRevealed(true)}>
+              <Button
+                variant="secondary"
+                size="lg"
+                className="w-full justify-center"
+                onClick={() => setRevealed(true)}
+              >
                 <Eye className="size-4" />
                 Reveal answer
                 <kbd className="ml-1 rounded border border-line px-1.5 py-0.5 text-[11px] text-ink-faint">

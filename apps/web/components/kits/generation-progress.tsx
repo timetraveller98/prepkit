@@ -141,7 +141,7 @@ function deriveStatuses(events: PipelineEvent[]): Map<string, StepEntry> {
   const statuses = new Map<string, StepEntry>();
 
   for (const event of events) {
-    const parent = event.step.includes(":") ? event.step.split(":")[0] ?? event.step : event.step;
+    const parent = event.step.includes(":") ? (event.step.split(":")[0] ?? event.step) : event.step;
     const entry = statuses.get(parent) ?? { status: "waiting", children: [] };
 
     if (event.step === parent) {

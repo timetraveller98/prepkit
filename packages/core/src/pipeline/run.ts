@@ -1,3 +1,4 @@
+import { currentEnv, type EnvSource, readEnvNumber } from "../env.ts";
 import {
   type Kit,
   QUESTION_CATEGORIES,
@@ -7,7 +8,6 @@ import {
   validateKit,
 } from "../kit.ts";
 import type { LlmClient } from "../llm/client.ts";
-import { type EnvSource, currentEnv, readEnvNumber } from "../env.ts";
 import { createLlmClient } from "../llm/index.ts";
 import {
   CompanySiteUnreachableError,
@@ -541,4 +541,3 @@ function asGenerationError(error: unknown): KitGenerationError {
 function describe(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
 }
-

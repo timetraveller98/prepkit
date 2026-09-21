@@ -1,6 +1,6 @@
+import { ChevronLeft } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ChevronLeft } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { NewKitForm } from "@/components/kits/new-kit-form";
 

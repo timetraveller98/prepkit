@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { Printer, Target, TrendingUp } from "lucide-react";
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
@@ -24,8 +24,8 @@ export function ReadinessPanel({ detail }: { detail: KitDetail }) {
     <div className="space-y-4">
       <div className="no-print flex flex-wrap items-center justify-between gap-2">
         <p className="text-[13px] text-ink-muted">
-          Scored from how confident you felt on the cards behind each requirement, weighted by whether
-          the posting called it a must.
+          Scored from how confident you felt on the cards behind each requirement, weighted by
+          whether the posting called it a must.
         </p>
         <Button size="sm" onClick={() => window.print()}>
           <Printer className="size-3.5" />
@@ -55,9 +55,7 @@ export function ReadinessPanel({ detail }: { detail: KitDetail }) {
               </div>
               <div className="rounded-lg bg-bg-subtle px-3 py-2">
                 <dt className="text-xs text-ink-faint">Never drilled</dt>
-                <dd className="mt-0.5 font-medium text-ink">
-                  {report.untouchedMustRequirements}
-                </dd>
+                <dd className="mt-0.5 font-medium text-ink">{report.untouchedMustRequirements}</dd>
               </div>
             </dl>
 

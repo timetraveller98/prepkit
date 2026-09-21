@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
 const SESSION_COOKIE = "prepkit_session";
 const PUBLIC_PATHS = new Set(["/login", "/register"]);

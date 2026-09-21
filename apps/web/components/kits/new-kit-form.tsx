@@ -1,14 +1,14 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { CalendarDays, FileUp, Globe, Upload } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { type ChangeEvent, type FormEvent, useState } from "react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
-import { Field, Input, Textarea } from "@/components/ui/field";
 import { ErrorState } from "@/components/ui/feedback";
+import { Field, Input, Textarea } from "@/components/ui/field";
 import { Dialog, DialogClose, DialogContent } from "@/components/ui/overlays";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ApiRequestError } from "@/lib/api";
@@ -50,7 +50,8 @@ function SingleKitForm() {
 
     const nextErrors: typeof errors = {};
     if (jobDescription.trim().length < 20) {
-      nextErrors.jobDescription = "Paste a bit more of the posting so there is something to extract.";
+      nextErrors.jobDescription =
+        "Paste a bit more of the posting so there is something to extract.";
     }
     if (companyUrl.trim().length < 3) nextErrors.companyUrl = "Add the company's website.";
     setErrors(nextErrors);
@@ -231,10 +232,15 @@ function BatchKitForm() {
           </span>
           <span className="max-w-md text-xs leading-relaxed text-ink-faint">
             JSON: an array of objects with <code className="font-mono">jd</code>,{" "}
-            <code className="font-mono">company_url</code> and <code className="font-mono">days</code>.
-            CSV: one header row with the same column names.
+            <code className="font-mono">company_url</code> and{" "}
+            <code className="font-mono">days</code>. CSV: one header row with the same column names.
           </span>
-          <input type="file" accept=".json,.csv,text/csv,application/json" className="sr-only" onChange={readFile} />
+          <input
+            type="file"
+            accept=".json,.csv,text/csv,application/json"
+            className="sr-only"
+            onChange={readFile}
+          />
         </label>
 
         {problems.length > 0 ? (
@@ -255,14 +261,23 @@ function BatchKitForm() {
             <table className="w-full text-left text-[13px]">
               <thead className="bg-bg-subtle text-xs text-ink-muted">
                 <tr>
-                  <th scope="col" className="px-3 py-2 font-medium">Company</th>
-                  <th scope="col" className="px-3 py-2 font-medium">Posting</th>
-                  <th scope="col" className="px-3 py-2 font-medium">Days</th>
+                  <th scope="col" className="px-3 py-2 font-medium">
+                    Company
+                  </th>
+                  <th scope="col" className="px-3 py-2 font-medium">
+                    Posting
+                  </th>
+                  <th scope="col" className="px-3 py-2 font-medium">
+                    Days
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {cases.map((entry) => (
-                  <tr key={`${entry.companyUrl}-${entry.jobDescription.slice(0, 24)}`} className="border-t border-line">
+                  <tr
+                    key={`${entry.companyUrl}-${entry.jobDescription.slice(0, 24)}`}
+                    className="border-t border-line"
+                  >
                     <td className="max-w-40 truncate px-3 py-2 text-ink">{entry.companyUrl}</td>
                     <td className="px-3 py-2 text-ink-muted">
                       {entry.jobDescription.slice(0, 60)}…
@@ -298,7 +313,9 @@ function BatchKitForm() {
             <Upload className="size-4" />
             Queue {cases.length || ""} kit{cases.length === 1 ? "" : "s"}
           </Button>
-          <p className="text-xs text-ink-faint">They generate a couple at a time to stay inside the free tier.</p>
+          <p className="text-xs text-ink-faint">
+            They generate a couple at a time to stay inside the free tier.
+          </p>
         </div>
       </CardBody>
     </Card>

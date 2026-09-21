@@ -1,4 +1,4 @@
-import { Pin, PencilLine, UserPen } from "lucide-react";
+import { PencilLine, Pin, UserPen } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import type { ItemMeta } from "@/lib/types";
 

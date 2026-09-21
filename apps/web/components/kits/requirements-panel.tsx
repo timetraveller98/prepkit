@@ -110,7 +110,10 @@ export function RequirementsPanel({ detail }: { detail: KitDetail }) {
               <ul className="space-y-1.5 text-[13px] leading-relaxed text-ink-muted">
                 {kit.role.responsibilities.map((responsibility) => (
                   <li key={responsibility} className="flex gap-2">
-                    <span aria-hidden className="mt-1.5 size-1 shrink-0 rounded-full bg-ink-faint" />
+                    <span
+                      aria-hidden
+                      className="mt-1.5 size-1 shrink-0 rounded-full bg-ink-faint"
+                    />
                     {responsibility}
                   </li>
                 ))}

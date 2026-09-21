@@ -40,7 +40,7 @@ export function InlineEditable({
 
   useLayoutEffect(() => {
     const element = textareaRef.current;
-    if (!element) return;
+    if (!element || element.value !== draft) return;
     element.style.height = "auto";
     element.style.height = `${element.scrollHeight}px`;
   }, [draft]);

@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { ArrowRight, FileStack, MoreHorizontal, RotateCw, Trash2 } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -174,9 +174,7 @@ export function KitListHeader() {
     <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
       <div>
         <h1 className="text-xl font-semibold tracking-tight text-ink">Your kits</h1>
-        <p className="mt-1 text-[13px] text-ink-muted">
-          One kit per role you are preparing for.
-        </p>
+        <p className="mt-1 text-[13px] text-ink-muted">One kit per role you are preparing for.</p>
       </div>
       <Button asChild variant="primary">
         <Link href="/kits/new">

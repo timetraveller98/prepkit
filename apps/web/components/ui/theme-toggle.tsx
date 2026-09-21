@@ -34,31 +34,33 @@ export function ThemeToggle() {
   }, [theme]);
 
   return (
-    <div
-      className="inline-flex items-center rounded-lg border border-line bg-surface p-0.5"
-      role="radiogroup"
-      aria-label="Colour theme"
-    >
+    <fieldset className="inline-flex items-center rounded-lg border border-line bg-surface p-0.5">
+      <legend className="sr-only">Colour theme</legend>
       {OPTIONS.map((option) => {
         const Icon = option.icon;
         const active = theme === option.value;
         return (
-          <button
+          <label
             key={option.value}
-            type="button"
-            role="radio"
-            aria-checked={active}
-            aria-label={option.label}
-            onClick={() => setTheme(option.value)}
             className={cn(
-              "rounded-md p-1.5 transition-colors",
+              "cursor-pointer rounded-md p-1.5 transition-colors",
+              "focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent",
               active ? "bg-bg-subtle text-ink" : "text-ink-faint hover:text-ink",
             )}
           >
-            <Icon className="size-3.5" />
-          </button>
+            <input
+              type="radio"
+              name="prepkit-theme"
+              className="sr-only"
+              value={option.value}
+              checked={active}
+              onChange={() => setTheme(option.value)}
+            />
+            <Icon className="size-3.5" aria-hidden />
+            <span className="sr-only">{option.label}</span>
+          </label>
         );
       })}
-    </div>
+    </fieldset>
   );
 }
