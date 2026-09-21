@@ -27,6 +27,8 @@ import {
 } from "./service.ts";
 
 const MAX_BATCH_CASES = 10;
+const MAX_LISTED_KITS = 100;
+const LIST_PROJECTION = "-events -research -itemState -jobDescription";
 
 const caseSchema = z.object({
   jobDescription: z.string().trim().min(20, "paste a little more of the posting").max(40_000),
@@ -93,7 +95,10 @@ export function createKitsRouter(queue: GenerationQueue, llmFactory: () => LlmCl
 
   router.get("/", async (request, response) => {
     const user = currentUser(request);
-    const documents = await KitModel.find({ userId: user.id }).sort({ createdAt: -1 }).limit(100);
+    const documents = await KitModel.find({ userId: user.id })
+      .select(LIST_PROJECTION)
+      .sort({ createdAt: -1 })
+      .limit(MAX_LISTED_KITS);
     response.json({ kits: documents.map(toKitSummary) });
   });
 
