@@ -84,7 +84,10 @@ export function computeReadiness(
   const score = weighted.weight === 0 ? 0 : Math.round((weighted.earned / weighted.weight) * 100);
 
   const ranked = [...byRequirement].sort(
-    (a, b) => b.risk - a.risk || a.requirementId.localeCompare(b.requirementId, "en"),
+    (a, b) =>
+      b.risk - a.risk ||
+      a.drilled - b.drilled ||
+      a.requirementId.localeCompare(b.requirementId, "en"),
   );
   const weakSpots = ranked
     .filter((item) => item.risk > 0.15)
