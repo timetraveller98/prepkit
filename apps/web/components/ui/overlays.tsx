@@ -27,17 +27,17 @@ export function DialogContent({
       <DialogPrimitive.Content
         className={cn(
           "fixed left-1/2 top-1/2 z-50 w-[min(34rem,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2",
-          "surface-panel shadow-panel max-h-[85vh] overflow-y-auto scroll-thin",
+          "panel shadow-md max-h-[85vh] overflow-y-auto scroll-thin",
           className,
         )}
       >
         <div className="flex items-start justify-between gap-4 border-b border-line px-5 py-4">
           <div className="space-y-1">
-            <DialogPrimitive.Title className="text-sm font-semibold text-ink">
+            <DialogPrimitive.Title className="text-body font-semibold text-ink">
               {title}
             </DialogPrimitive.Title>
             {description ? (
-              <DialogPrimitive.Description className="text-[13px] text-ink-muted">
+              <DialogPrimitive.Description className="text-small text-ink-muted">
                 {description}
               </DialogPrimitive.Description>
             ) : (
@@ -45,7 +45,7 @@ export function DialogContent({
             )}
           </div>
           <DialogPrimitive.Close
-            className="rounded-md p-1 text-ink-faint transition-colors hover:bg-bg-subtle hover:text-ink"
+            className="rounded-md p-1 text-ink-faint transition-colors hover:bg-sunken hover:text-ink"
             aria-label="Close"
           >
             <X className="size-4" />
@@ -68,7 +68,7 @@ export function Tooltip({ label, children }: { label: string; children: ReactNod
       <TooltipPrimitive.Portal>
         <TooltipPrimitive.Content
           sideOffset={6}
-          className="z-50 rounded-md border border-line bg-surface-raised px-2 py-1 text-xs text-ink shadow-panel"
+          className="z-50 rounded-md border border-line bg-raised px-2 py-1 text-tiny text-ink shadow-md"
         >
           {label}
         </TooltipPrimitive.Content>

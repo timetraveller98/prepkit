@@ -17,7 +17,7 @@ export function MenuContent({
         sideOffset={6}
         align="end"
         className={cn(
-          "z-50 min-w-44 overflow-hidden rounded-lg border border-line bg-surface-raised p-1 shadow-panel",
+          "z-50 min-w-44 overflow-hidden rounded-lg border border-line bg-raised p-1 shadow-md",
           className,
         )}
         {...props}
@@ -34,8 +34,8 @@ export function MenuItem({
   return (
     <DropdownMenuPrimitive.Item
       className={cn(
-        "flex cursor-pointer items-center gap-2 rounded-md px-2.5 py-1.5 text-[13px] outline-none",
-        "data-[highlighted]:bg-bg-subtle",
+        "flex cursor-pointer items-center gap-2 rounded-md px-2.5 py-1.5 text-small outline-none",
+        "data-[highlighted]:bg-sunken",
         destructive ? "text-danger" : "text-ink",
         className,
       )}

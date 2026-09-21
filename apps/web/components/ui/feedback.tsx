@@ -8,11 +8,7 @@ export function Spinner({ className, ...props }: ComponentProps<"svg">) {
 
 export function Skeleton({ className, ...props }: ComponentProps<"div">) {
   return (
-    <div
-      className={cn("animate-pulse rounded-md bg-bg-subtle", className)}
-      aria-hidden
-      {...props}
-    />
+    <div className={cn("animate-pulse rounded-lg bg-sunken", className)} aria-hidden {...props} />
   );
 }
 
@@ -30,13 +26,17 @@ export function EmptyState({
   className?: string;
 }) {
   return (
-    <div className={cn("flex flex-col items-center px-6 py-14 text-center", className)}>
-      {icon ? <div className="mb-3 text-ink-faint">{icon}</div> : null}
-      <p className="text-sm font-medium text-ink">{title}</p>
-      {description ? (
-        <p className="mt-1 max-w-sm text-[13px] leading-relaxed text-ink-muted">{description}</p>
+    <div className={cn("flex flex-col items-center px-6 py-16 text-center", className)}>
+      {icon ? (
+        <div className="mb-4 grid size-11 place-items-center rounded-xl border border-line bg-sunken text-ink-faint">
+          {icon}
+        </div>
       ) : null}
-      {action ? <div className="mt-4">{action}</div> : null}
+      <p className="text-lead font-semibold text-ink">{title}</p>
+      {description ? (
+        <p className="mt-1.5 max-w-sm text-small leading-relaxed text-ink-muted">{description}</p>
+      ) : null}
+      {action ? <div className="mt-5">{action}</div> : null}
     </div>
   );
 }
@@ -53,9 +53,9 @@ export function ErrorState({
   return (
     <div
       role="alert"
-      className="rounded-xl border border-danger/40 bg-danger-soft/60 px-4 py-3.5 text-[13px]"
+      className="rounded-xl border border-danger/35 bg-danger-soft/60 px-4 py-3.5 text-small"
     >
-      <p className="font-medium text-danger">{title}</p>
+      <p className="font-semibold text-danger">{title}</p>
       <p className="mt-1 leading-relaxed text-ink-muted">{message}</p>
       {action ? <div className="mt-3">{action}</div> : null}
     </div>
@@ -65,16 +65,25 @@ export function ErrorState({
 export function ProgressBar({
   value,
   label,
+  tone = "accent",
   className,
 }: {
   value: number;
   label: string;
+  tone?: "accent" | "success" | "warning" | "danger";
   className?: string;
 }) {
   const clamped = Math.max(0, Math.min(100, Math.round(value)));
+  const fills = {
+    accent: "bg-accent",
+    success: "bg-success",
+    warning: "bg-warning",
+    danger: "bg-danger",
+  } as const;
+
   return (
     <div
-      className={cn("h-1.5 w-full overflow-hidden rounded-full bg-bg-subtle", className)}
+      className={cn("h-1.5 w-full overflow-hidden rounded-full bg-sunken", className)}
       role="progressbar"
       aria-valuenow={clamped}
       aria-valuemin={0}
@@ -82,7 +91,7 @@ export function ProgressBar({
       aria-label={label}
     >
       <div
-        className="h-full rounded-full bg-accent transition-[width] duration-500 ease-out"
+        className={cn("h-full rounded-full transition-[width] duration-500 ease-out", fills[tone])}
         style={{ width: `${clamped}%` }}
       />
     </div>
