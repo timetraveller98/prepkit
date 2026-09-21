@@ -65,22 +65,33 @@ export function SchedulePanel({ detail }: { detail: KitDetail }) {
           }
         />
         <CardBody className="p-0">
-          <ol className="divide-y divide-[var(--border)]">
+          <ol className="divide-y divide-line">
             {kit.schedule.days.map((day) => (
-              <li key={day.day} className="grid gap-3 px-5 py-4 sm:grid-cols-[6rem_minmax(0,1fr)]">
-                <div>
-                  <p className="text-xs tracking-wide text-ink-faint uppercase">Day {day.day}</p>
-                  <p className="mt-0.5 text-[13px] font-medium text-ink">{day.minutes} min</p>
+              <li
+                key={day.day}
+                className="grid gap-3 px-4 py-4 transition-colors hover:bg-sunken/60 sm:grid-cols-[5.5rem_minmax(0,1fr)] sm:px-5"
+              >
+                <div className="flex items-center gap-2 sm:block">
+                  <span className="numeric text-micro tracking-[0.06em] text-ink-faint uppercase">
+                    Day {day.day}
+                  </span>
+                  <span aria-hidden className="h-3 w-px bg-line sm:hidden" />
+                  <span className="numeric text-small font-medium text-ink sm:mt-0.5 sm:block">
+                    {day.minutes} min
+                  </span>
                 </div>
+
                 <div className="min-w-0">
-                  <p className="text-[14px] font-medium text-ink">{day.focus}</p>
+                  <p className="text-body font-medium text-ink">{day.focus}</p>
                   {day.question_ids.length > 0 ? (
                     <ul className="mt-2 space-y-1.5">
                       {day.question_ids.map((id) => {
                         const question = questionById.get(id);
                         return (
-                          <li key={id} className="flex gap-2 text-[13px] text-ink-muted">
-                            <Badge>{id}</Badge>
+                          <li key={id} className="flex gap-2 text-small text-ink-muted">
+                            <Badge tone="outline" className="mt-px shrink-0">
+                              {id}
+                            </Badge>
                             <span className="min-w-0 leading-snug">
                               {question?.prompt ?? "Missing question"}
                             </span>
@@ -89,7 +100,7 @@ export function SchedulePanel({ detail }: { detail: KitDetail }) {
                       })}
                     </ul>
                   ) : (
-                    <p className="mt-1 text-[13px] text-ink-faint">
+                    <p className="mt-1 text-small text-ink-faint">
                       Nothing allocated: this kit has no questions to study.
                     </p>
                   )}

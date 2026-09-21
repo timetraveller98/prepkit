@@ -11,7 +11,7 @@ export default async function KitPage({ params }: PageProps<"/kits/[id]">) {
 
   return (
     <AppShell>
-      <Suspense fallback={<Skeleton className="h-96 rounded-[var(--radius-card)]" />}>
+      <Suspense fallback={<Skeleton className="h-96 rounded-xl" />}>
         <KitWorkspace kitId={id} />
       </Suspense>
     </AppShell>

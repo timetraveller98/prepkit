@@ -78,69 +78,78 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-sm flex-col justify-center px-4 py-16">
-      <div className="mb-8 flex items-center gap-2 text-sm font-semibold tracking-tight text-ink">
-        <span className="grid size-7 place-items-center rounded-lg bg-accent text-accent-fg">
-          <Sparkles className="size-3.5" />
-        </span>
-        PrepKit
+    <div className="relative flex min-h-dvh flex-col items-center justify-center px-4 py-12">
+      <div
+        aria-hidden
+        className="grid-backdrop pointer-events-none absolute inset-0 opacity-[0.55] [mask-image:radial-gradient(ellipse_at_center,black,transparent_72%)]"
+      />
+
+      <div className="relative w-full max-w-[25rem] rise-in">
+        <div className="mb-7 flex items-center gap-2 text-body font-semibold tracking-tight text-ink">
+          <span className="grid size-8 place-items-center rounded-xl bg-accent text-accent-fg shadow-sm">
+            <Sparkles className="size-4" />
+          </span>
+          PrepKit
+        </div>
+
+        <div className="panel p-6 sm:p-7">
+          <h1 className="text-title font-semibold text-ink">{copy.heading}</h1>
+          <p className="mt-1 text-small text-ink-muted">{copy.subheading}</p>
+
+          <form onSubmit={submit} className="mt-6 space-y-4" noValidate>
+            {failure ? <ErrorState title="That did not work" message={failure} /> : null}
+
+            <Field label="Email" error={fieldErrors.email}>
+              {(props) => (
+                <Input
+                  {...props}
+                  type="email"
+                  name="email"
+                  autoComplete="email"
+                  autoFocus
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  placeholder="you@example.com"
+                />
+              )}
+            </Field>
+
+            <Field
+              label="Password"
+              hint={mode === "register" ? "At least 10 characters." : undefined}
+              error={fieldErrors.password}
+            >
+              {(props) => (
+                <Input
+                  {...props}
+                  type="password"
+                  name="password"
+                  autoComplete={mode === "register" ? "new-password" : "current-password"}
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                />
+              )}
+            </Field>
+
+            <Button
+              type="submit"
+              variant="primary"
+              size="lg"
+              className="w-full justify-center"
+              loading={pending}
+            >
+              {copy.submit}
+            </Button>
+          </form>
+        </div>
+
+        <p className="mt-5 text-center text-small text-ink-muted">
+          {copy.switchPrompt}{" "}
+          <Link href={copy.switchHref} className="font-medium text-accent hover:underline">
+            {copy.switchLabel}
+          </Link>
+        </p>
       </div>
-
-      <h1 className="text-xl font-semibold tracking-tight text-ink">{copy.heading}</h1>
-      <p className="mt-1 text-[13px] text-ink-muted">{copy.subheading}</p>
-
-      <form onSubmit={submit} className="mt-6 space-y-4" noValidate>
-        {failure ? <ErrorState title="That did not work" message={failure} /> : null}
-
-        <Field label="Email" error={fieldErrors.email}>
-          {(props) => (
-            <Input
-              {...props}
-              type="email"
-              name="email"
-              autoComplete="email"
-              autoFocus
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              placeholder="you@example.com"
-            />
-          )}
-        </Field>
-
-        <Field
-          label="Password"
-          hint={mode === "register" ? "At least 10 characters." : undefined}
-          error={fieldErrors.password}
-        >
-          {(props) => (
-            <Input
-              {...props}
-              type="password"
-              name="password"
-              autoComplete={mode === "register" ? "new-password" : "current-password"}
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-            />
-          )}
-        </Field>
-
-        <Button
-          type="submit"
-          variant="primary"
-          size="lg"
-          className="w-full justify-center"
-          loading={pending}
-        >
-          {copy.submit}
-        </Button>
-      </form>
-
-      <p className="mt-6 text-[13px] text-ink-muted">
-        {copy.switchPrompt}{" "}
-        <Link href={copy.switchHref} className="font-medium text-accent hover:underline">
-          {copy.switchLabel}
-        </Link>
-      </p>
     </div>
   );
 }

@@ -81,7 +81,7 @@ export function InlineEditable({
       "w-full rounded-md border border-transparent bg-transparent px-2 py-1.5 text-ink transition-colors",
       "hover:border-line focus:border-accent focus:bg-surface focus:outline-none",
       "placeholder:text-ink-faint",
-      monospace && "font-mono text-[13px]",
+      monospace && "font-mono text-small",
       className,
     ),
   };
@@ -111,7 +111,7 @@ export function InlineEditable({
       <span
         aria-live="polite"
         className={cn(
-          "pointer-events-none absolute -top-1 right-1 flex items-center gap-1 text-[11px] text-success transition-opacity",
+          "pointer-events-none absolute -top-1 right-1 flex items-center gap-1 text-micro text-success transition-opacity",
           justSaved ? "opacity-100" : "opacity-0",
         )}
       >

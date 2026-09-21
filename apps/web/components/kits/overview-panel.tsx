@@ -38,7 +38,7 @@ export function OverviewPanel({ detail }: { detail: KitDetail }) {
           />
           <CardBody className="space-y-4">
             <div>
-              <h3 className="mb-1 px-2 text-xs font-medium tracking-wide text-ink-faint uppercase">
+              <h3 className="mb-1 px-2 text-tiny font-medium tracking-wide text-ink-faint uppercase">
                 Summary
               </h3>
               <InlineEditable
@@ -46,12 +46,12 @@ export function OverviewPanel({ detail }: { detail: KitDetail }) {
                 value={kit.company_brief.summary}
                 multiline
                 placeholder="Nothing could be established about this company."
-                className="text-[14px] leading-relaxed"
+                className="text-body leading-relaxed"
                 onSave={(summary) => updateBrief.mutate({ summary })}
               />
             </div>
             <div>
-              <h3 className="mb-1 px-2 text-xs font-medium tracking-wide text-ink-faint uppercase">
+              <h3 className="mb-1 px-2 text-tiny font-medium tracking-wide text-ink-faint uppercase">
                 What they do
               </h3>
               <InlineEditable
@@ -59,14 +59,14 @@ export function OverviewPanel({ detail }: { detail: KitDetail }) {
                 value={kit.company_brief.what_they_do}
                 multiline
                 placeholder="Unknown."
-                className="text-[14px] leading-relaxed text-ink-muted"
+                className="text-body leading-relaxed text-ink-muted"
                 onSave={(what_they_do) => updateBrief.mutate({ what_they_do })}
               />
             </div>
 
             {kit.company_brief.sources.length > 0 ? (
               <div className="border-t border-line pt-3">
-                <h3 className="mb-1.5 text-xs font-medium tracking-wide text-ink-faint uppercase">
+                <h3 className="mb-1.5 text-tiny font-medium tracking-wide text-ink-faint uppercase">
                   Sources
                 </h3>
                 <ul className="space-y-1">
@@ -98,20 +98,18 @@ export function OverviewPanel({ detail }: { detail: KitDetail }) {
           <CardBody>
             {detail.hiringProcess?.found ? (
               <div className="space-y-4">
-                <p className="text-[14px] leading-relaxed text-ink">
-                  {detail.hiringProcess.summary}
-                </p>
+                <p className="text-body leading-relaxed text-ink">{detail.hiringProcess.summary}</p>
 
                 {detail.hiringProcess.stages.length > 0 ? (
                   <ol className="space-y-2">
                     {detail.hiringProcess.stages.map((stage, index) => (
                       <li key={stage.name} className="flex gap-3">
-                        <span className="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-accent-soft text-[11px] font-semibold text-accent">
+                        <span className="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-accent-soft text-micro font-semibold text-accent">
                           {index + 1}
                         </span>
                         <div className="min-w-0">
-                          <p className="text-[13px] font-medium text-ink">{stage.name}</p>
-                          <p className="text-[13px] leading-relaxed text-ink-muted">
+                          <p className="text-small font-medium text-ink">{stage.name}</p>
+                          <p className="text-small leading-relaxed text-ink-muted">
                             {stage.what_happens}
                           </p>
                         </div>
@@ -122,7 +120,7 @@ export function OverviewPanel({ detail }: { detail: KitDetail }) {
 
                 {detail.hiringProcess.signals.length > 0 ? (
                   <div className="flex flex-wrap gap-1.5 border-t border-line pt-3">
-                    <span className="text-xs text-ink-faint">Prepare for:</span>
+                    <span className="text-tiny text-ink-faint">Prepare for:</span>
                     {detail.hiringProcess.signals.map((signal) => (
                       <Badge key={signal} tone="accent">
                         {signal}
@@ -132,7 +130,7 @@ export function OverviewPanel({ detail }: { detail: KitDetail }) {
                 ) : null}
               </div>
             ) : (
-              <p className="flex items-start gap-2 text-[13px] leading-relaxed text-ink-muted">
+              <p className="flex items-start gap-2 text-small leading-relaxed text-ink-muted">
                 <Info className="mt-0.5 size-4 shrink-0 text-ink-faint" />
                 No hiring or interview-process page was found on their site, and public discussion
                 turned up nothing usable. Rather than guess, this kit is built from the posting and
@@ -147,7 +145,7 @@ export function OverviewPanel({ detail }: { detail: KitDetail }) {
         <Card>
           <CardHeader title="What the research reached" />
           <CardBody className="space-y-3">
-            <dl className="grid grid-cols-2 gap-3 text-[13px]">
+            <dl className="grid grid-cols-2 gap-3 text-small">
               <Stat label="Pages read" value={kit.source.pages_used.length} />
               <Stat label="Pages skipped" value={kit.research.pages_failed.length} />
               <Stat
@@ -172,10 +170,10 @@ export function OverviewPanel({ detail }: { detail: KitDetail }) {
 
             {kit.research.pages_failed.length > 0 ? (
               <details className="border-t border-line pt-3">
-                <summary className="cursor-pointer text-xs text-ink-faint hover:text-ink-muted">
+                <summary className="cursor-pointer text-tiny text-ink-faint hover:text-ink-muted">
                   {kit.research.pages_failed.length} source(s) could not be retrieved
                 </summary>
-                <ul className="mt-2 space-y-1 text-xs text-ink-faint">
+                <ul className="mt-2 space-y-1 text-tiny text-ink-faint">
                   {kit.research.pages_failed.slice(0, 12).map((failure) => (
                     <li key={`${failure.url}-${failure.reason}`} className="break-all">
                       <span className="text-ink-muted">{failure.url}</span> — {failure.reason}
@@ -191,7 +189,7 @@ export function OverviewPanel({ detail }: { detail: KitDetail }) {
           <Card>
             <CardHeader title="What this kit does not know" />
             <CardBody>
-              <ul className="space-y-2 text-[13px] leading-relaxed text-ink-muted">
+              <ul className="space-y-2 text-small leading-relaxed text-ink-muted">
                 {kit.notes.map((note) => (
                   <li key={note} className="flex gap-2">
                     <span
@@ -210,12 +208,12 @@ export function OverviewPanel({ detail }: { detail: KitDetail }) {
           <Card className="border-warning/40">
             <CardHeader title="Content that tried to give instructions" />
             <CardBody>
-              <p className="mb-2 flex items-start gap-2 text-[13px] leading-relaxed text-ink-muted">
+              <p className="mb-2 flex items-start gap-2 text-small leading-relaxed text-ink-muted">
                 <ShieldAlert className="mt-0.5 size-4 shrink-0 text-warning" />
                 These sources contained text shaped like instructions to the model. It was passed
                 through as data and never followed.
               </p>
-              <ul className="space-y-1 text-xs text-ink-faint">
+              <ul className="space-y-1 text-tiny text-ink-faint">
                 {kit.research.suspicious_content_flags.map((flag) => (
                   <li key={flag}>{flag}</li>
                 ))}
@@ -230,9 +228,9 @@ export function OverviewPanel({ detail }: { detail: KitDetail }) {
 
 function Stat({ label, value }: { label: string; value: string | number }) {
   return (
-    <div className="rounded-lg bg-bg-subtle px-3 py-2">
-      <dt className="text-xs text-ink-faint">{label}</dt>
-      <dd className="mt-0.5 text-sm font-medium text-ink">{value}</dd>
+    <div className="rounded-lg bg-sunken px-3 py-2">
+      <dt className="text-tiny text-ink-faint">{label}</dt>
+      <dd className="mt-0.5 text-body font-medium text-ink">{value}</dd>
     </div>
   );
 }
@@ -243,7 +241,7 @@ function SourceLink({ href, label }: { href: string; label?: string }) {
       href={href}
       target="_blank"
       rel="noreferrer noopener"
-      className="inline-flex items-start gap-1 text-xs break-all text-ink-muted hover:text-accent hover:underline"
+      className="inline-flex items-start gap-1 text-tiny break-all text-ink-muted hover:text-accent hover:underline"
     >
       <span className="min-w-0">{label ?? href}</span>
       <ExternalLink className="mt-0.5 size-3 shrink-0" aria-hidden />

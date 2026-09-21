@@ -48,7 +48,7 @@ export function RequirementsPanel({ detail }: { detail: KitDetail }) {
           }
         />
         <CardBody className="p-0">
-          <ul className="divide-y divide-[var(--border)]">
+          <ul className="divide-y divide-line">
             {kit.role.requirements.map((requirement) => {
               const covering = questionsFor(requirement.id);
               return (
@@ -71,9 +71,9 @@ export function RequirementsPanel({ detail }: { detail: KitDetail }) {
                       </Badge>
                     )}
                   </div>
-                  <p className="mt-1.5 text-[14px] leading-snug text-ink">{requirement.text}</p>
+                  <p className="mt-1.5 text-body leading-snug text-ink">{requirement.text}</p>
                   {requirement.evidence && requirement.evidence !== requirement.text ? (
-                    <p className="mt-1 border-l-2 border-line pl-2 text-xs leading-relaxed text-ink-faint italic">
+                    <p className="mt-1 border-l-2 border-line pl-2 text-tiny leading-relaxed text-ink-faint italic">
                       {requirement.evidence}
                     </p>
                   ) : null}
@@ -87,17 +87,17 @@ export function RequirementsPanel({ detail }: { detail: KitDetail }) {
       <div className="space-y-4">
         <Card>
           <CardHeader title="The role as read" />
-          <CardBody className="space-y-3 text-[13px]">
+          <CardBody className="space-y-3 text-small">
             <div>
-              <p className="text-xs text-ink-faint">Title</p>
+              <p className="text-tiny text-ink-faint">Title</p>
               <p className="text-ink">{kit.role.title || "Not stated"}</p>
             </div>
             <div>
-              <p className="text-xs text-ink-faint">Seniority</p>
+              <p className="text-tiny text-ink-faint">Seniority</p>
               <p className="text-ink">{kit.role.seniority || "Not stated"}</p>
             </div>
             <div>
-              <p className="text-xs text-ink-faint">Location</p>
+              <p className="text-tiny text-ink-faint">Location</p>
               <p className="text-ink">{kit.source.location || "Not stated"}</p>
             </div>
           </CardBody>
@@ -107,7 +107,7 @@ export function RequirementsPanel({ detail }: { detail: KitDetail }) {
           <Card>
             <CardHeader title="Responsibilities" />
             <CardBody>
-              <ul className="space-y-1.5 text-[13px] leading-relaxed text-ink-muted">
+              <ul className="space-y-1.5 text-small leading-relaxed text-ink-muted">
                 {kit.role.responsibilities.map((responsibility) => (
                   <li key={responsibility} className="flex gap-2">
                     <span

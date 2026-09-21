@@ -104,7 +104,7 @@ function SingleKitForm() {
                   value={jobDescription}
                   onChange={(event) => setJobDescription(event.target.value)}
                   placeholder={"Senior Backend Engineer\n\nWe are looking for..."}
-                  className="font-mono text-[13px]"
+                  className="font-mono text-small"
                 />
               )}
             </Field>
@@ -163,7 +163,7 @@ function SingleKitForm() {
                 <CalendarDays className="size-4" />
                 Build my kit
               </Button>
-              <p className="text-xs text-ink-faint">Usually ninety seconds to two minutes.</p>
+              <p className="text-tiny text-ink-faint">Usually ninety seconds to two minutes.</p>
             </div>
           </form>
         </CardBody>
@@ -174,7 +174,7 @@ function SingleKitForm() {
           title="You already prepared this one"
           description="The same posting and company are already in your kits."
         >
-          <p className="text-[13px] text-ink-muted">{duplicate?.title}</p>
+          <p className="text-small text-ink-muted">{duplicate?.title}</p>
           <div className="mt-5 flex flex-wrap justify-end gap-2">
             <Button
               size="sm"
@@ -225,12 +225,12 @@ function BatchKitForm() {
         description="Upload a JSON or CSV file of description and company pairs. Every row becomes its own kit."
       />
       <CardBody className="space-y-5">
-        <label className="flex cursor-pointer flex-col items-center gap-2 rounded-xl border border-dashed border-line-strong px-6 py-10 text-center transition-colors hover:bg-bg-subtle">
+        <label className="flex cursor-pointer flex-col items-center gap-2 rounded-xl border border-dashed border-line-strong px-6 py-10 text-center transition-colors hover:bg-sunken">
           <FileUp className="size-6 text-ink-faint" />
-          <span className="text-[13px] font-medium text-ink">
+          <span className="text-small font-medium text-ink">
             {fileName || "Choose a .json or .csv file"}
           </span>
-          <span className="max-w-md text-xs leading-relaxed text-ink-faint">
+          <span className="max-w-md text-tiny leading-relaxed text-ink-faint">
             JSON: an array of objects with <code className="font-mono">jd</code>,{" "}
             <code className="font-mono">company_url</code> and{" "}
             <code className="font-mono">days</code>. CSV: one header row with the same column names.
@@ -245,10 +245,10 @@ function BatchKitForm() {
 
         {problems.length > 0 ? (
           <div className="rounded-xl border border-warning/40 bg-warning-soft/50 px-4 py-3">
-            <p className="text-[13px] font-medium text-warning">
+            <p className="text-small font-medium text-warning">
               {problems.length} row{problems.length === 1 ? "" : "s"} skipped
             </p>
-            <ul className="mt-1.5 space-y-0.5 text-xs text-ink-muted">
+            <ul className="mt-1.5 space-y-0.5 text-tiny text-ink-muted">
               {problems.slice(0, 6).map((problem) => (
                 <li key={problem}>{problem}</li>
               ))}
@@ -258,8 +258,8 @@ function BatchKitForm() {
 
         {cases.length > 0 ? (
           <div className="overflow-hidden rounded-xl border border-line">
-            <table className="w-full text-left text-[13px]">
-              <thead className="bg-bg-subtle text-xs text-ink-muted">
+            <table className="w-full text-left text-small">
+              <thead className="bg-sunken text-tiny text-ink-muted">
                 <tr>
                   <th scope="col" className="px-3 py-2 font-medium">
                     Company
@@ -313,7 +313,7 @@ function BatchKitForm() {
             <Upload className="size-4" />
             Queue {cases.length || ""} kit{cases.length === 1 ? "" : "s"}
           </Button>
-          <p className="text-xs text-ink-faint">
+          <p className="text-tiny text-ink-faint">
             They generate a couple at a time to stay inside the free tier.
           </p>
         </div>

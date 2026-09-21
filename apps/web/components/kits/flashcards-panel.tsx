@@ -173,7 +173,7 @@ function FlashcardRow({ detail, flashcard }: { detail: KitDetail; flashcard: Fla
         label="Card front"
         value={flashcard.front}
         multiline
-        className="text-[15px] leading-snug font-medium"
+        className="text-lead leading-snug font-medium"
         onSave={(front) => update.mutate({ flashcardId: flashcard.id, patch: { front } })}
       />
       <InlineEditable
@@ -181,7 +181,7 @@ function FlashcardRow({ detail, flashcard }: { detail: KitDetail; flashcard: Fla
         value={flashcard.back}
         multiline
         placeholder="The answer, plus the detail that proves you know it…"
-        className="text-[13px] text-ink-muted"
+        className="text-small text-ink-muted"
         onSave={(back) => update.mutate({ flashcardId: flashcard.id, patch: { back } })}
       />
     </SortableRow>

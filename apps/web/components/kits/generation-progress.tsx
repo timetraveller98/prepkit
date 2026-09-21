@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertCircle, Check, CircleDashed, Loader2, MinusCircle } from "lucide-react";
+import { AlertCircle, Check, CircleDashed, Loader2, MinusCircle, RotateCw } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
@@ -37,7 +37,7 @@ const STATUS_STYLE: Record<StepStatus, string> = {
   waiting: "text-ink-faint",
   running: "text-accent",
   done: "text-success",
-  skipped: "text-ink-faint",
+  skipped: "text-ink-faint/70",
   failed: "text-danger",
 };
 
@@ -61,16 +61,21 @@ export function GenerationProgress({ detail }: { detail: KitDetail }) {
         actions={
           failed ? (
             <Button
-              size="sm"
+              size="md"
               variant="primary"
               loading={retry.isPending}
               onClick={() =>
                 retry.mutate(detail.id, { onSuccess: () => toast.success("Generation restarted") })
               }
             >
+              <RotateCw className="size-3.5" />
               Try again
             </Button>
-          ) : null
+          ) : (
+            <span className="numeric text-tiny text-ink-faint">
+              {completed} of {MAIN_STEPS.length}
+            </span>
+          )
         }
       />
       <CardBody className="space-y-5">
@@ -83,39 +88,45 @@ export function GenerationProgress({ detail }: { detail: KitDetail }) {
           />
         )}
 
-        <ol className="space-y-1" aria-live="polite">
+        <ol className="relative space-y-0.5" aria-live="polite">
+          <span aria-hidden className="absolute top-3 bottom-3 left-[0.4375rem] w-px bg-line" />
           {MAIN_STEPS.map((step) => {
             const entry = statuses.get(step);
             const status = entry?.status ?? "waiting";
             const Icon = STATUS_ICON[status];
 
             return (
-              <li key={step} className="flex items-start gap-2.5 rounded-lg px-1 py-1.5">
-                <Icon
+              <li key={step} className="relative flex items-start gap-3 py-1.5">
+                <span
                   className={cn(
-                    "mt-0.5 size-4 shrink-0",
+                    "relative z-10 mt-0.5 grid size-3.5 shrink-0 place-items-center rounded-full bg-surface",
                     STATUS_STYLE[status],
-                    status === "running" && "animate-spin",
                   )}
-                  aria-hidden
-                />
+                >
+                  <Icon
+                    className={cn("size-3.5", status === "running" && "animate-spin")}
+                    aria-hidden
+                  />
+                </span>
                 <div className="min-w-0 flex-1">
                   <p
                     className={cn(
-                      "text-[13px]",
-                      status === "waiting" ? "text-ink-faint" : "text-ink",
+                      "text-small transition-colors",
+                      status === "waiting" ? "text-ink-faint" : "font-medium text-ink",
                     )}
                   >
                     {stepLabel(step)}
                   </p>
                   {entry?.message ? (
-                    <p className="text-xs leading-relaxed text-ink-muted">{entry.message}</p>
+                    <p className="mt-0.5 text-tiny leading-relaxed text-ink-muted">
+                      {entry.message}
+                    </p>
                   ) : null}
                   {entry?.children.length ? (
                     <ul className="mt-1 space-y-0.5">
                       {entry.children.map((child) => (
-                        <li key={child.step} className="text-xs text-ink-faint">
-                          {stepLabel(child.step)}
+                        <li key={child.step} className="text-tiny text-ink-faint">
+                          <span className="text-ink-muted">{stepLabel(child.step)}</span>
                           {child.message ? ` — ${child.message}` : ""}
                         </li>
                       ))}

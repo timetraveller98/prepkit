@@ -26,14 +26,14 @@ export function SortableRow({
       ref={setNodeRef}
       style={{ transform: CSS.Translate.toString(transform), transition }}
       className={cn(
-        "surface-panel relative flex gap-2 p-3 sm:gap-3 sm:p-4",
-        isDragging && "z-10 border-accent shadow-panel",
+        "panel relative flex gap-2 p-3 sm:gap-3 sm:p-4",
+        isDragging && "z-10 border-accent shadow-md",
         className,
       )}
     >
       <button
         type="button"
-        className="mt-0.5 h-7 shrink-0 cursor-grab touch-none rounded-md px-1 text-ink-faint transition-colors hover:bg-bg-subtle hover:text-ink active:cursor-grabbing"
+        className="mt-0.5 h-7 shrink-0 cursor-grab touch-none rounded-md px-1 text-ink-faint transition-colors hover:bg-sunken hover:text-ink active:cursor-grabbing"
         aria-label={`Reorder ${label}. Press space, then use the arrow keys.`}
         {...attributes}
         {...listeners}

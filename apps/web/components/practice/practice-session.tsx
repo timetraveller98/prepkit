@@ -60,7 +60,7 @@ export function PracticeSession({ kitId }: { kitId: string }) {
   }, [current, revealed, record]);
 
   if (kit.isPending || session.isPending) {
-    return <Skeleton className="h-80 rounded-[var(--radius-card)]" />;
+    return <Skeleton className="h-80 rounded-xl" />;
   }
 
   if (session.isError) {
@@ -99,7 +99,7 @@ export function PracticeSession({ kitId }: { kitId: string }) {
       <div className="flex flex-wrap items-center justify-between gap-2">
         <Link
           href={`/kits/${kitId}`}
-          className="inline-flex items-center gap-1 text-[13px] text-ink-muted hover:text-ink"
+          className="inline-flex items-center gap-1 text-small text-ink-muted hover:text-ink"
         >
           <ChevronLeft className="size-3.5" />
           Back to the kit
@@ -125,7 +125,7 @@ export function PracticeSession({ kitId }: { kitId: string }) {
 
       {progress ? (
         <div className="space-y-2">
-          <div className="flex items-center justify-between text-[13px]">
+          <div className="flex items-center justify-between text-small">
             <span className="text-ink-muted">
               {progress.seen} of {progress.total} cards covered
             </span>
@@ -166,32 +166,38 @@ export function PracticeSession({ kitId }: { kitId: string }) {
           </CardBody>
         </Card>
       ) : current ? (
-        <Card>
+        <Card className="rise-in">
           <CardHeader
-            title={`Card ${index + 1} of ${cards.length}`}
+            title={
+              <span className="numeric">
+                Card {index + 1} <span className="text-ink-faint">of {cards.length}</span>
+              </span>
+            }
             actions={
-              <div className="flex gap-1.5">
-                {current.record?.lastConfidence !== null && current.record ? (
-                  <Badge tone="neutral">
-                    last: {CONFIDENCE_OPTIONS[current.record.lastConfidence ?? 0]?.label}
+              <div className="flex flex-wrap gap-1.5">
+                {current.record && current.record.lastConfidence !== null ? (
+                  <Badge tone="outline">
+                    last: {CONFIDENCE_OPTIONS[current.record.lastConfidence]?.label}
                   </Badge>
                 ) : (
                   <Badge tone="accent">new</Badge>
                 )}
                 {current.flashcard.requirement_ids.map((id) => (
-                  <Badge key={id}>{id}</Badge>
+                  <Badge key={id} tone="outline">
+                    {id}
+                  </Badge>
                 ))}
               </div>
             }
           />
-          <CardBody className="space-y-6">
-            <p className="text-lg leading-snug font-medium text-balance text-ink">
+          <CardBody className="space-y-6 py-7 sm:py-8">
+            <p className="text-heading leading-snug font-semibold text-balance text-ink">
               {current.flashcard.front}
             </p>
 
             {revealed ? (
-              <div className="rounded-xl border border-line bg-bg-subtle px-4 py-3.5">
-                <p className="text-[14px] leading-relaxed whitespace-pre-line text-ink">
+              <div className="fade-in rounded-xl border border-line bg-sunken px-4 py-4">
+                <p className="text-body leading-relaxed whitespace-pre-line text-ink">
                   {current.flashcard.back || "This card has no answer written on the back yet."}
                 </p>
               </div>
@@ -204,35 +210,35 @@ export function PracticeSession({ kitId }: { kitId: string }) {
               >
                 <Eye className="size-4" />
                 Reveal answer
-                <kbd className="ml-1 rounded border border-line px-1.5 py-0.5 text-[11px] text-ink-faint">
+                <kbd className="ml-1 rounded border border-line bg-sunken px-1.5 py-0.5 text-micro text-ink-faint">
                   space
                 </kbd>
               </Button>
             )}
 
             {revealed ? (
-              <div>
-                <p className="mb-2 text-xs tracking-wide text-ink-faint uppercase">
+              <div className="fade-in">
+                <p className="mb-2.5 text-micro font-medium tracking-[0.06em] text-ink-faint uppercase">
                   How did that feel?
                 </p>
-                <div className="grid gap-2 sm:grid-cols-4">
+                <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
                   {CONFIDENCE_OPTIONS.map((option, position) => (
                     <button
                       key={option.value}
                       type="button"
                       onClick={() => record(option.value)}
                       className={cn(
-                        "rounded-xl border border-line px-3 py-2.5 text-left transition-colors",
-                        "hover:border-accent hover:bg-accent-soft/40",
+                        "rounded-xl border border-line bg-surface px-3 py-2.5 text-left shadow-xs transition-all duration-150",
+                        "hover:-translate-y-px hover:border-accent-line hover:bg-accent-soft/40 hover:shadow-sm active:translate-y-0",
                       )}
                     >
-                      <span className="flex items-center justify-between">
-                        <span className="text-[13px] font-medium text-ink">{option.label}</span>
-                        <kbd className="rounded border border-line px-1 text-[10px] text-ink-faint">
+                      <span className="flex items-center justify-between gap-2">
+                        <span className="text-small font-medium text-ink">{option.label}</span>
+                        <kbd className="numeric rounded border border-line bg-sunken px-1 text-micro text-ink-faint">
                           {position + 1}
                         </kbd>
                       </span>
-                      <span className="mt-0.5 block text-[11px] text-ink-faint">{option.hint}</span>
+                      <span className="mt-0.5 block text-micro text-ink-faint">{option.hint}</span>
                     </button>
                   ))}
                 </div>

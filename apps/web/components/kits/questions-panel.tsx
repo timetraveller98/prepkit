@@ -129,7 +129,7 @@ function CategoryGroup({
         <div className="flex items-center gap-2">
           <h3
             id={`questions-${category}`}
-            className="text-sm font-semibold tracking-tight text-ink"
+            className="text-body font-semibold tracking-tight text-ink"
           >
             {CATEGORY_LABELS[category]}
           </h3>
@@ -151,7 +151,7 @@ function CategoryGroup({
       </div>
 
       {questions.length === 0 ? (
-        <p className="surface-panel px-4 py-6 text-center text-[13px] text-ink-muted">
+        <p className="panel px-4 py-6 text-center text-small text-ink-muted">
           Nothing in this category yet.
         </p>
       ) : (
@@ -259,12 +259,12 @@ function QuestionRow({ detail, question }: { detail: KitDetail; question: Questi
         label="Question"
         value={question.prompt}
         multiline
-        className="mt-1 text-[15px] leading-snug font-medium"
+        className="mt-1 text-lead leading-snug font-medium"
         onSave={(prompt) => update.mutate({ questionId: question.id, patch: { prompt } })}
       />
 
       <details className="group mt-1">
-        <summary className="cursor-pointer list-none px-2 text-xs text-ink-faint transition-colors hover:text-ink-muted">
+        <summary className="cursor-pointer list-none px-2 text-tiny text-ink-faint transition-colors hover:text-ink-muted">
           <span className="group-open:hidden">Show answer outline</span>
           <span className="hidden group-open:inline">Hide answer outline</span>
         </summary>
@@ -273,18 +273,18 @@ function QuestionRow({ detail, question }: { detail: KitDetail; question: Questi
           value={question.answer_outline}
           multiline
           placeholder="What a strong answer covers…"
-          className="mt-1 text-[13px] text-ink-muted"
+          className="mt-1 text-small text-ink-muted"
           onSave={(answer_outline) =>
             update.mutate({ questionId: question.id, patch: { answer_outline } })
           }
         />
         <div className="mt-2 flex items-center gap-2 px-2">
-          <label className="text-xs text-ink-faint" htmlFor={`difficulty-${question.id}`}>
+          <label className="text-tiny text-ink-faint" htmlFor={`difficulty-${question.id}`}>
             Difficulty
           </label>
           <Select
             id={`difficulty-${question.id}`}
-            className="h-8 w-36 text-xs"
+            className="h-8 w-36 text-tiny"
             value={String(question.difficulty)}
             onChange={(event) =>
               update.mutate({
