@@ -579,7 +579,7 @@ Everything fetched — and the pasted posting — is text nobody here wrote.
 npm test
 ```
 
-106 tests. The ones worth having:
+136 tests. The ones worth having:
 
 - **Schedule allocation** — exact day count for 1, 2, 3, 5, 7, 14, 30 and 60 days; every
   question scheduled in both directions of the more-days/more-questions split;
@@ -604,6 +604,9 @@ npm test
 - **Ownership** — one account can never read, edit or delete another account's kit.
 - **Bearer tokens** — a token minted with the shared secret authenticates; one signed
   with the wrong secret, or an expired one, does not.
+- **Theme contrast** — every text-on-surface pair in both themes is checked against WCAG
+  by parsing the design tokens out of the stylesheet, so a palette change cannot quietly
+  make a label unreadable.
 - **The batch file parser** — JSON and CSV in every column spelling the interface
   accepts, postings containing commas and newlines inside quotes, doubled quotes, day
   counts clamped, and skipped rows numbered so they match the file.

@@ -11,7 +11,7 @@ primitives for anything with real interaction semantics.
 | `/login`, `/register` | static shell | The same form component in two modes |
 | `/kits` | static shell, client data | The kit list |
 | `/kits/new` | static shell, client data | One role, or a file of them |
-| `/kits/[id]` | dynamic | The builder |
+| `/kits/[id]` | dynamic | The builder. Panels are `next/dynamic`, so a tab's code — and `@dnd-kit` with it — loads when that tab is opened |
 | `/kits/[id]/practice` | dynamic | A practice session |
 | `/api/auth/[...nextauth]` | route handler | NextAuth |
 | `/backend/[...path]` | route handler | The authenticated forwarder to the API |
@@ -35,6 +35,10 @@ A primitive never imports a feature component, and a feature component never rea
 into another feature's internals. The only shared state is the React Query cache.
 
 ## State
+
+**Queries are split by domain.** `lib/queries/` has `kits`, `builder`, `practice` and
+`auth`, with shared optimistic plumbing in `shared.ts` and a barrel so call sites import
+from `@/lib/queries` either way.
 
 **Server state is React Query.** There is no client store. A kit has exactly one source
 of truth — `queryKeys.kit(id)` — and every mutation writes the server's response back
@@ -100,8 +104,19 @@ the target list does this land".
 
 CSS custom properties in `oklch`, defined on `:root` and overridden under `.dark`, then
 exposed to Tailwind through `@theme inline`. Components reference semantic names —
-`bg-surface`, `text-ink-muted`, `border-line` — never raw palette values, so both themes
-are maintained in one place.
+`bg-surface`, `bg-sunken`, `text-ink-muted`, `border-line` — never raw palette values, so
+both themes are maintained in one place. Type sizes, radii and elevation are tokens too
+(`text-small`, `rounded-xl`, `shadow-md`), so a component never hard-codes a pixel value.
+
+Surfaces are layered rather than flat: `canvas` behind, `surface` for panels, `sunken`
+for wells and inputs' neighbours, `raised` for menus and popovers, each with its own
+shadow step. That is what gives depth without resorting to heavy borders.
+
+**Contrast is tested, not assumed.** `apps/web/test/theme-contrast.test.ts` parses
+`globals.css`, converts every `oklch` token to sRGB, and asserts the WCAG ratio for each
+text-on-surface pair in both themes — 4.5:1 for body text, 3:1 for the faintest tier. It
+also asserts both themes define the same token set. It has already caught one failure: a
+light-mode warning colour at 4.12:1.
 
 Dark mode is a `.dark` class, not the media query alone, so it can be switched manually.
 A small inline script applies the stored preference before first paint, which is what

@@ -5,7 +5,7 @@ npm test          # everything
 npm run test:watch
 ```
 
-106 tests, 11 files, about 18 seconds. No API key, no network, no installed database —
+136 tests, 12 files, about 18 seconds. No API key, no network, no installed database —
 `mongodb-memory-server` provides MongoDB and a stubbed provider stands in for the model.
 
 ## What is covered, and why it was chosen
@@ -124,6 +124,13 @@ The batch upload parses in the browser, so the parser is worth protecting:
 - CSV with a posting that contains commas and newlines inside quotes, and doubled quotes
   unescaped.
 - A CSV missing the columns it needs is refused with a message that says which.
+
+### `apps/web/test/theme-contrast.test.ts`
+
+Parses the design tokens out of `globals.css`, converts each `oklch` value to sRGB, and
+asserts the WCAG contrast ratio for every text-on-surface pair in both themes, plus that
+the two themes define the same token set. A palette tweak that quietly makes a label
+unreadable fails the build rather than shipping.
 
 ### `apps/api/test/api.test.ts`
 
