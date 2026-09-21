@@ -2,7 +2,7 @@
 
 import { type QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
-import { apiFetch, jsonBody } from "./api";
+import { API_BASE_PATH, apiFetch, jsonBody } from "./api";
 import type {
   Flashcard,
   KitDetail,
@@ -49,6 +49,10 @@ export function useKit(kitId: string) {
     queryKey: queryKeys.kit(kitId),
     queryFn: async () => (await apiFetch<{ kit: KitDetail }>(`/kits/${kitId}`)).kit,
     enabled: kitId.length > 0,
+    refetchInterval: (query) => {
+      const status = query.state.data?.status;
+      return status === "queued" || status === "running" ? 6_000 : false;
+    },
   });
 }
 
@@ -381,7 +385,9 @@ export function useKitProgressStream(kitId: string, active: boolean) {
   useEffect(() => {
     if (!active || kitId.length === 0) return;
 
-    const source = new EventSource(`/api/kits/${kitId}/events`, { withCredentials: true });
+    const source = new EventSource(`${API_BASE_PATH}/kits/${kitId}/events`, {
+      withCredentials: true,
+    });
 
     source.onmessage = (message) => {
       const payload = JSON.parse(message.data) as {

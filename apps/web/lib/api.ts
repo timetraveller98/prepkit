@@ -1,3 +1,5 @@
+export const API_BASE_PATH = "/backend";
+
 export class ApiRequestError extends Error {
   readonly status: number;
   readonly code: string;
@@ -19,7 +21,7 @@ export class ApiRequestError extends Error {
 export async function apiFetch<TResult>(path: string, init: RequestInit = {}): Promise<TResult> {
   let response: Response;
   try {
-    response = await fetch(`/backend${path}`, {
+    response = await fetch(`${API_BASE_PATH}${path}`, {
       credentials: "include",
       headers: init.body ? { "content-type": "application/json", ...init.headers } : init.headers,
       ...init,
