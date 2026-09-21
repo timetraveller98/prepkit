@@ -5,7 +5,7 @@ npm test          # everything
 npm run test:watch
 ```
 
-91 tests, 11 files, about 17 seconds. No API key, no network, no installed database —
+106 tests, 12 files, about 18 seconds. No API key, no network, no installed database —
 `mongodb-memory-server` provides MongoDB and a stubbed provider stands in for the model.
 
 ## What is covered, and why it was chosen
@@ -111,6 +111,20 @@ site; only the model is stubbed.
   spans the requested days, and a note saying why.
 - An empty posting fails with `EMPTY_JOB_DESCRIPTION`.
 
+### `apps/web/test/parse-cases.test.ts`
+
+The batch upload parses in the browser, so the parser is worth protecting:
+
+- JSON in the same shape the batch command takes, and in the camelCase spelling the
+  interface uses.
+- A missing day count defaults rather than rejecting the row; an out-of-range one is
+  clamped.
+- Skipped rows are reported with the row number they have in the file, and the good rows
+  still come through.
+- CSV with a posting that contains commas and newlines inside quotes, and doubled quotes
+  unescaped.
+- A CSV missing the columns it needs is refused with a message that says which.
+
 ### `apps/api/test/api.test.ts`
 
 Supertest against the real Express app and an in-memory MongoDB.
@@ -137,7 +151,7 @@ Supertest against the real Express app and an in-memory MongoDB.
 
 ## What is not covered
 
-- **React components.** There are no component tests. The time went into the pipeline
+- **React components.** Beyond the batch file parser, there are no component tests. The time went into the pipeline
   and the API, where a regression is silent; a broken panel is visible the moment you
   open it. `npm run typecheck` and the production build cover the compile surface.
 - **The `/backend` forwarder.** It is exercised by hand and in the browser, not by an

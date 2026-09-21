@@ -206,6 +206,11 @@ so practice mode is never empty for no reason.
 Pure arithmetic — see the README's *How the schedule is allocated* for the algorithm and
 its guarantees.
 
+Day focus lines are built by `topicLabel`, which strips experience boilerplate
+("5+ years with React" → "React"), stops at the first clause boundary
+("PostgreSQL, including schema design under load" → "PostgreSQL"), and never ends on a
+dangling preposition or article. A requirement short enough to read whole is kept whole.
+
 ### 13. `validate`
 
 `validateKit` runs the full Zod schema plus the cross-field rules. A kit that fails is
