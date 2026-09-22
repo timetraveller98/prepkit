@@ -25,10 +25,10 @@ export function NewKitForm() {
         <TabsTrigger value="single">One role</TabsTrigger>
         <TabsTrigger value="batch">Several roles</TabsTrigger>
       </TabsList>
-      <TabsContent value="single">
+      <TabsContent value="single" keepMounted>
         <SingleKitForm />
       </TabsContent>
-      <TabsContent value="batch">
+      <TabsContent value="batch" keepMounted>
         <BatchKitForm />
       </TabsContent>
     </Tabs>

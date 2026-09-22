@@ -34,10 +34,22 @@ export function TabsTrigger({ className, ...props }: ComponentProps<typeof TabsP
   );
 }
 
-export function TabsContent({ className, ...props }: ComponentProps<typeof TabsPrimitive.Content>) {
+export function TabsContent({
+  className,
+  keepMounted = false,
+  ...props
+}: ComponentProps<typeof TabsPrimitive.Content> & { keepMounted?: boolean }) {
   return (
     <TabsPrimitive.Content
-      className={cn("fade-in focus-visible:outline-none", className)}
+      // Radix unmounts an inactive panel, which throws away whatever state the
+      // panel holds. `keepMounted` keeps it in the tree and hides it with CSS
+      // instead, so a half-filled form survives a trip to another tab.
+      forceMount={keepMounted || undefined}
+      className={cn(
+        "fade-in focus-visible:outline-none",
+        keepMounted && "data-[state=inactive]:hidden",
+        className,
+      )}
       {...props}
     />
   );
