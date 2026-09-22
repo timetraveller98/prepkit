@@ -29,7 +29,20 @@ async function forward(request: Request, context: RouteContext<"/backend/[...pat
     headers.set("authorization", `Bearer ${await serviceToken(userId, session.user.email ?? "")}`);
   }
 
-  const target = new URL(`/api/${pathname}${new URL(request.url).search}`, apiOrigin());
+  let target: URL;
+  try {
+    target = new URL(`/api/${pathname}${new URL(request.url).search}`, apiOrigin());
+  } catch (error) {
+    return Response.json(
+      {
+        error: {
+          code: "API_NOT_CONFIGURED",
+          message: error instanceof Error ? error.message : "the api origin is not configured",
+        },
+      },
+      { status: 500 },
+    );
+  }
   const hasBody = request.method !== "GET" && request.method !== "HEAD";
 
   let upstream: Response;
@@ -42,7 +55,12 @@ async function forward(request: Request, context: RouteContext<"/backend/[...pat
     });
   } catch {
     return Response.json(
-      { error: { code: "API_UNREACHABLE", message: "the api service is not responding" } },
+      {
+        error: {
+          code: "API_UNREACHABLE",
+          message: `the api service at ${target.origin} is not responding`,
+        },
+      },
       { status: 502 },
     );
   }
