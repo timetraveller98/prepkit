@@ -1,8 +1,9 @@
 "use client";
 
 import * as LabelPrimitive from "@radix-ui/react-label";
+import { Eye, EyeOff } from "lucide-react";
 import type { ComponentProps, ReactNode } from "react";
-import { useId } from "react";
+import { useId, useState } from "react";
 import { cn } from "@/lib/cn";
 
 const CONTROL =
@@ -18,6 +19,37 @@ export function Label({ className, ...props }: ComponentProps<typeof LabelPrimit
 
 export function Input({ className, ...props }: ComponentProps<"input">) {
   return <input className={cn(CONTROL, "h-9", className)} {...props} />;
+}
+
+/**
+ * A password field with a reveal toggle. The type is swapped rather than the
+ * value masked, so a password manager still sees a password input on load.
+ */
+export function PasswordInput({ className, ...props }: ComponentProps<"input">) {
+  const [revealed, setRevealed] = useState(false);
+
+  return (
+    <div className="relative">
+      <input
+        {...props}
+        type={revealed ? "text" : "password"}
+        className={cn(CONTROL, "h-9 pr-9", className)}
+      />
+      <button
+        type="button"
+        onClick={() => setRevealed((current) => !current)}
+        aria-label={revealed ? "Hide password" : "Show password"}
+        aria-pressed={revealed}
+        className="absolute inset-y-0 right-0 grid w-9 place-items-center rounded-r-lg text-ink-faint transition-colors hover:text-ink"
+      >
+        {revealed ? (
+          <EyeOff className="size-3.5" aria-hidden />
+        ) : (
+          <Eye className="size-3.5" aria-hidden />
+        )}
+      </button>
+    </div>
+  );
 }
 
 export function Textarea({ className, ...props }: ComponentProps<"textarea">) {

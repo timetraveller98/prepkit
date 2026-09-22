@@ -7,7 +7,7 @@ import { signIn } from "next-auth/react";
 import { type FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ErrorState } from "@/components/ui/feedback";
-import { Field, Input } from "@/components/ui/field";
+import { Field, Input, PasswordInput } from "@/components/ui/field";
 import { ApiRequestError } from "@/lib/api";
 import { useRegister } from "@/lib/queries";
 
@@ -30,6 +30,12 @@ const COPY = {
   },
 } as const;
 
+interface FieldErrors {
+  email?: string;
+  password?: string;
+  confirmPassword?: string;
+}
+
 export function AuthForm({ mode }: { mode: "login" | "register" }) {
   const copy = COPY[mode];
   const router = useRouter();
@@ -38,16 +44,20 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({});
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [failure, setFailure] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
 
-    const errors: { email?: string; password?: string } = {};
+    const errors: FieldErrors = {};
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) errors.email = "Enter a valid email address.";
     if (password.length < 10) errors.password = "Use at least 10 characters.";
+    if (mode === "register" && confirmPassword !== password) {
+      errors.confirmPassword = "Both passwords must match.";
+    }
     setFieldErrors(errors);
     if (Object.keys(errors).length > 0) return;
 
@@ -120,9 +130,8 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
               error={fieldErrors.password}
             >
               {(props) => (
-                <Input
+                <PasswordInput
                   {...props}
-                  type="password"
                   name="password"
                   autoComplete={mode === "register" ? "new-password" : "current-password"}
                   value={password}
@@ -130,6 +139,20 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
                 />
               )}
             </Field>
+
+            {mode === "register" ? (
+              <Field label="Re-enter password" error={fieldErrors.confirmPassword}>
+                {(props) => (
+                  <PasswordInput
+                    {...props}
+                    name="confirmPassword"
+                    autoComplete="new-password"
+                    value={confirmPassword}
+                    onChange={(event) => setConfirmPassword(event.target.value)}
+                  />
+                )}
+              </Field>
+            ) : null}
 
             <Button
               type="submit"
