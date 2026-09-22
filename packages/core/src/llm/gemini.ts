@@ -98,7 +98,7 @@ export async function fetchWithTimeout(url: string, init: RequestInit): Promise<
 }
 
 export function toProviderError(response: Response, body: string): Error {
-  const detail = body.slice(0, 400);
+  const detail = body.slice(0, 1200);
   if (response.status === 429 || response.status >= 500) {
     return new RetryableError(
       `llm provider responded ${response.status}: ${detail}`,
