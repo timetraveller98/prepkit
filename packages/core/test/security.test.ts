@@ -21,6 +21,12 @@ describe("url guard", () => {
     }
   });
 
+  it("blocks an IPv6 literal written with the brackets a URL keeps", () => {
+    for (const address of ["[::1]", "[fd00::1]", "[fe80::1]"]) {
+      expect(isBlockedAddress(address), address).toBe(true);
+    }
+  });
+
   it("allows ordinary public addresses", () => {
     for (const address of ["8.8.8.8", "1.1.1.1", "93.184.216.34", "2606:4700::1111"]) {
       expect(isBlockedAddress(address), address).toBe(false);

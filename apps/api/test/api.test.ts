@@ -223,6 +223,22 @@ describe("bearer tokens", () => {
   });
 });
 
+describe("cross-origin requests", () => {
+  it("omits the CORS headers for an origin that is not allow-listed, without erroring", async () => {
+    const response = await request(app).get("/health").set("Origin", "https://evil.example.test");
+
+    expect(response.status).toBe(200);
+    expect(response.headers["access-control-allow-origin"]).toBeUndefined();
+  });
+
+  it("echoes an allow-listed origin back with credentials enabled", async () => {
+    const response = await request(app).get("/health").set("Origin", "http://localhost:3000");
+
+    expect(response.headers["access-control-allow-origin"]).toBe("http://localhost:3000");
+    expect(response.headers["access-control-allow-credentials"]).toBe("true");
+  });
+});
+
 describe("kit ownership", () => {
   it("never shows one user another user's kit", async () => {
     const owner = await signIn();

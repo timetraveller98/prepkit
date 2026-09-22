@@ -34,10 +34,7 @@ export function createApp({ env, queue, llm }: AppDependencies): Express {
   app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
   app.use(
     cors({
-      origin: (origin, callback) => {
-        if (!origin || env.corsOrigins.includes(origin)) callback(null, true);
-        else callback(new Error(`origin ${origin} is not allowed`));
-      },
+      origin: (origin, callback) => callback(null, !origin || env.corsOrigins.includes(origin)),
       credentials: true,
     }),
   );

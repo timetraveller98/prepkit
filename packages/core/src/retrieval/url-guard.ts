@@ -56,7 +56,8 @@ export async function assertFetchable(raw: string | URL, options: UrlGuardOption
 }
 
 async function resolveAddresses(hostname: string): Promise<string[]> {
-  if (isIP(hostname)) return [hostname];
+  const literal = stripIpv6Brackets(hostname);
+  if (isIP(literal)) return [literal];
   try {
     const records = await lookup(hostname, { all: true, verbatim: true });
     if (records.length === 0) throw new Error("no records");
@@ -69,7 +70,12 @@ async function resolveAddresses(hostname: string): Promise<string[]> {
   }
 }
 
-export function isBlockedAddress(address: string): boolean {
+export function stripIpv6Brackets(hostname: string): string {
+  return hostname.startsWith("[") && hostname.endsWith("]") ? hostname.slice(1, -1) : hostname;
+}
+
+export function isBlockedAddress(rawAddress: string): boolean {
+  const address = stripIpv6Brackets(rawAddress);
   const version = isIP(address);
   if (version === 4) return isBlockedIpv4(address);
   if (version === 6) return isBlockedIpv6(address);
