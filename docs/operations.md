@@ -71,6 +71,24 @@ Set `ALLOW_PRIVATE_URLS=true` to point a kit at them.
 
 ## Deployment
 
+### Why the API is not on Vercel
+
+It was tried; it fails for a reason worth stating. The API is a long-lived stateful
+process and Vercel runs per-request functions:
+
+- `GenerationQueue` keeps its running set, its pending list and its event emitter in
+  memory. Across invocations that state does not exist, so a kit enqueued by one request
+  is never picked up by another.
+- `POST /api/kits` answers `202` and keeps working afterwards. Work after the response is
+  killed on a serverless function.
+- The progress stream holds a connection open for minutes; the Hobby function limit is
+  sixty seconds by default.
+- `releaseInterruptedKits()` runs at boot, so every cold start would mark whatever was
+  in flight as `INTERRUPTED`.
+
+It would deploy and then fail every kit. A platform with a persistent process — Render,
+Railway, Fly — is the requirement, not a preference.
+
 ### API on Render
 
 `render.yaml` is a blueprint: `npm ci`, `npm run start:api`, health check on `/health`,
@@ -81,6 +99,10 @@ dashboard.
 `NODE_ENV=production` is what turns on the private-address block, `secure` cookies and
 `trust proxy`. It also makes `npm ci` skip devDependencies, which is why `tsx` is a
 runtime dependency of `@prepkit/api` rather than a dev one.
+
+`JWT_SECRET` here and `API_JWT_SECRET` on the web app **must be the same value**. The web
+server signs a five-minute token with its copy and the API verifies it with this one; if
+they differ, sign-in works and every API call returns 401.
 
 ### Web on Vercel
 

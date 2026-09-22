@@ -11,8 +11,11 @@ services:
         value: production
       - key: PORT
         value: 4000
+      # Must be set to the SAME value as the web app's API_JWT_SECRET, so the
+      # API can verify the token the web server signs. Set by hand rather than
+      # generated, because both sides have to agree on it.
       - key: JWT_SECRET
-        generateValue: true
+        sync: false
       - key: SESSION_TTL_DAYS
         value: 7
       - key: GENERATION_CONCURRENCY
@@ -35,3 +38,8 @@ services:
         sync: false
       - key: BRAVE_API_KEY
         sync: false
+      - key: TAVILY_API_KEY
+        sync: false
+
+# ALLOW_PRIVATE_URLS is deliberately absent: leaving it unset is what keeps the
+# private-address block on in production.
