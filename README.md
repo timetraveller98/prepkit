@@ -60,7 +60,7 @@ editable, and practisable inside the app.
 | Database | MongoDB (Mongoose) | The preferred stack. A kit is one deeply nested document that is almost always read whole, which is exactly what a document store is good at. |
 | Language | TypeScript, strict, everywhere | |
 | Scraping | `undici`'s `fetch` (built into Node) + `cheerio` + `robots-parser` | No headless browser. Company marketing sites and handbooks are server-rendered; a browser would triple the runtime and the memory footprint for nothing. |
-| LLM | Google Gemini (`gemini-2.5-flash`) | The most usable free tier for this workload: its tokens-per-minute budget is the one that survives a five-case batch. The provider is behind an interface, so any OpenAI-compatible endpoint (Groq, OpenRouter, Together) works by changing two environment variables. |
+| LLM | Google Gemini (`gemini-3.6-flash`) | The most usable free tier for this workload: its tokens-per-minute budget is the one that survives a five-case batch. The provider is behind an interface, so any OpenAI-compatible endpoint (Groq, OpenRouter, Together) works by changing two environment variables. |
 | Tests | Vitest + Supertest + `mongodb-memory-server` | |
 | Lint/format | Biome | One tool instead of ESLint plus Prettier, and fast enough to run on every save. |
 
@@ -723,9 +723,14 @@ yields little, which is a real limitation.
   that had completed are not. Persisting each section as it lands would be better.
 - Pinning applies to questions and flashcards. Pinning a specific schedule day is not
   supported; the schedule is fully derived.
-- Requirement extraction quality is bounded by the model. `gemini-2.5-flash` is
+- Requirement extraction quality is bounded by the model. `gemini-3.6-flash` is
   consistent on well-structured postings and less so on prose-heavy ones that bury
   requirements in paragraphs.
+- Google retires Gemini model names over time, and a retired name is rejected outright
+  for keys issued after the cutoff. The model is a single environment variable for that
+  reason: `LLM_MODEL` changes it without a code change, and the provider's own message is
+  passed through verbatim, so the kit says exactly which model was refused and what to
+  use instead.
 
 ---
 

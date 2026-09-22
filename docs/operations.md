@@ -25,7 +25,7 @@ running: `GEMINI_API_KEY`, `MONGODB_URI` and `AUTH_SECRET`.
 | Variable | Default | Notes |
 | --- | --- | --- |
 | `LLM_PROVIDER` | `gemini` | Anything else uses the OpenAI-compatible adapter |
-| `LLM_MODEL` | `gemini-2.5-flash` | |
+| `LLM_MODEL` | `gemini-3.6-flash` | |
 | `LLM_API_KEY`, `LLM_BASE_URL` | — | Required for an OpenAI-compatible provider |
 | `LLM_REQUESTS_PER_MINUTE` | `10` | |
 | `LLM_TOKENS_PER_MINUTE` | `200000` | The limit free tiers actually enforce |
@@ -138,8 +138,11 @@ that means the dashboard, not `.env`.
 
 ### Every kit fails with `LLM_UNAVAILABLE`
 
-The key is wrong, the quota is exhausted, or the model name does not exist. The message
-carries the provider's own response.
+The key is wrong, the quota is exhausted, or the model name no longer exists. The
+message carries the provider's own response verbatim, so read it: Google retires Gemini
+model names and rejects a retired one for keys issued after the cutoff, naming the
+replacement in the error. Set `LLM_MODEL` to the name it gives and restart. No code
+change is needed.
 
 ### Generation is very slow
 

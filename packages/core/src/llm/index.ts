@@ -25,7 +25,7 @@ export function createProvider(env: LlmEnv = currentEnv()): LlmProvider {
   if (provider === "gemini" || provider === "google") {
     const apiKey = env.GEMINI_API_KEY ?? env.LLM_API_KEY;
     if (!apiKey) throw new MissingCredentialsError("GEMINI_API_KEY");
-    return new GeminiProvider({ apiKey, model: env.LLM_MODEL ?? "gemini-2.5-flash" });
+    return new GeminiProvider({ apiKey, model: env.LLM_MODEL ?? "gemini-3.6-flash" });
   }
 
   const apiKey = env.LLM_API_KEY;
