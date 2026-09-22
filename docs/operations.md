@@ -109,6 +109,18 @@ they differ, sign-in works and every API call returns 401.
 Import the repository, set **Root Directory** to `apps/web`, and set `API_ORIGIN`,
 `AUTH_SECRET` and `API_JWT_SECRET`. Vercel handles the npm workspace itself.
 
+`next build` type checks the entire project its `tsconfig.json` selects, test files
+included, which is why `apps/web/tsconfig.json` excludes `test/`. Those files import
+`vitest`, a devDependency of the repository root; an install that leaves it out failed
+the build on test code rather than on anything that ships. `tsconfig.test.json` keeps
+them under `npm run typecheck`.
+
+The `/backend` forwarder runs as a serverless function, so the progress stream it
+proxies is cut when the function reaches its duration limit. Nothing breaks: the kit
+query polls every six seconds while a kit is generating, so the page keeps updating with
+coarser granularity. Raising `maxDuration` on the route is the fix if the live feed
+matters.
+
 ### Database
 
 MongoDB Atlas free tier. Network access must allow the API's egress; on Render's free
