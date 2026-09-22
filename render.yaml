@@ -24,8 +24,11 @@ services:
         value: gemini
       - key: LLM_MODEL
         value: gemini-3.6-flash
+      # Gemini's free tier allows 5 generate_content requests per minute. The
+      # client throttles to this before sending rather than waiting to be told.
+      # Raise it to match your tier if you have a higher one.
       - key: LLM_REQUESTS_PER_MINUTE
-        value: 10
+        value: 5
       - key: LLM_TOKENS_PER_MINUTE
         value: 200000
       - key: LLM_CONCURRENCY

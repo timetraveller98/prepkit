@@ -45,10 +45,10 @@ export function createLlmClient(
 ): LlmClient {
   return new LlmClient({
     provider: overrides.provider ?? createProvider(env),
-    requestsPerMinute: readEnvNumber(env.LLM_REQUESTS_PER_MINUTE, 10),
+    requestsPerMinute: readEnvNumber(env.LLM_REQUESTS_PER_MINUTE, 5),
     tokensPerMinute: readEnvNumber(env.LLM_TOKENS_PER_MINUTE, 200_000),
     maxConcurrent: readEnvNumber(env.LLM_CONCURRENCY, 2),
-    attempts: readEnvNumber(env.LLM_MAX_ATTEMPTS, 4),
+    attempts: readEnvNumber(env.LLM_MAX_ATTEMPTS, 6),
     ...overrides,
   });
 }

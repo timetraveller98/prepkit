@@ -514,9 +514,15 @@ cannot be enqueued again, and regeneration takes a per-section lock.
 
 **The provider rate-limits you.** The client throttles *before* sending, tracking a
 rolling one-minute window of both requests and estimated tokens, because free tiers cap
-tokens per minute and that is the limit people actually hit. On a 429 it backs off
-exponentially with jitter and honours `Retry-After` — including the `retryDelay` field
-Gemini returns in its error body. The batch command shares one limiter across all cases.
+tokens per minute and that is the limit people actually hit. On a 429 or a 503 it backs
+off exponentially with jitter and honours `Retry-After` — including the `retryDelay`
+field Gemini returns in its error body — for up to six attempts. The batch command
+shares one limiter across all cases, so raising `--concurrency` cannot blow the budget.
+
+The defaults are calibrated against a real key rather than guessed: Gemini's free tier
+allows five `generate_content` requests per minute, so `LLM_REQUESTS_PER_MINUTE`
+defaults to five. Setting it higher is how you get 429s, which is the failure this
+whole layer exists to avoid.
 
 **The model returns malformed JSON.** Output goes through a recovery pass that handles
 markdown fences, leading prose, trailing commas and braces inside strings. If it still
@@ -642,7 +648,7 @@ Every variable is documented inline in `.env.example`. The short version:
 | --- | --- | --- |
 | `GEMINI_API_KEY` | api, batch | The model key. Free from Google AI Studio. |
 | `LLM_PROVIDER`, `LLM_MODEL` | api, batch | `gemini` by default. Set to any other value plus `LLM_API_KEY` and `LLM_BASE_URL` to use an OpenAI-compatible provider. |
-| `LLM_REQUESTS_PER_MINUTE`, `LLM_TOKENS_PER_MINUTE`, `LLM_CONCURRENCY`, `LLM_MAX_ATTEMPTS` | api, batch | Client-side throttling so a free tier is never the reason a run fails. |
+| `LLM_REQUESTS_PER_MINUTE`, `LLM_TOKENS_PER_MINUTE`, `LLM_CONCURRENCY`, `LLM_MAX_ATTEMPTS` | api, batch | Client-side throttling so a free tier is never the reason a run fails. The default of 5 requests per minute is Gemini's free-tier `generate_content` limit, measured against a live key; raise it to match a higher tier. |
 | `SEARCH_PROVIDER`, `BRAVE_API_KEY`, `TAVILY_API_KEY` | api, batch | Optional. With no key, DuckDuckGo's HTML endpoint is used. `none` skips the search step. |
 | `ALLOW_PRIVATE_URLS` | api, batch | Allows loopback and private addresses. Off in production. Needed for the local fixture sites. |
 | `FETCH_TIMEOUT_MS`, `FETCH_MAX_BYTES`, `CRAWL_MAX_PAGES` | api, batch | Retrieval budget. |

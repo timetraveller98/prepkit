@@ -27,10 +27,10 @@ running: `GEMINI_API_KEY`, `MONGODB_URI` and `AUTH_SECRET`.
 | `LLM_PROVIDER` | `gemini` | Anything else uses the OpenAI-compatible adapter |
 | `LLM_MODEL` | `gemini-3.6-flash` | |
 | `LLM_API_KEY`, `LLM_BASE_URL` | — | Required for an OpenAI-compatible provider |
-| `LLM_REQUESTS_PER_MINUTE` | `10` | |
+| `LLM_REQUESTS_PER_MINUTE` | `5` | Gemini's free-tier `generate_content` limit. Raise to match a higher tier |
 | `LLM_TOKENS_PER_MINUTE` | `200000` | The limit free tiers actually enforce |
 | `LLM_CONCURRENCY` | `2` | |
-| `LLM_MAX_ATTEMPTS` | `4` | |
+| `LLM_MAX_ATTEMPTS` | `6` | Covers a 503 spike as well as a 429 |
 | `SEARCH_PROVIDER` | — | `none` skips the search step entirely |
 | `BRAVE_API_KEY`, `TAVILY_API_KEY` | — | Without either, DuckDuckGo's HTML endpoint is used |
 | `ALLOW_PRIVATE_URLS` | off in production | Needed for local fixture sites |
@@ -158,9 +158,24 @@ change is needed.
 
 ### Generation is very slow
 
-Expected: ninety seconds to two minutes. Slower usually means rate limiting — the client
-throttles before sending, so a low `LLM_REQUESTS_PER_MINUTE` or `LLM_TOKENS_PER_MINUTE`
-shows up as waiting rather than as errors. Raise them to your tier's real limits.
+Expected: ninety seconds to two minutes at a normal rate limit. On Gemini's free tier,
+capped at five requests per minute, a kit takes closer to two and a half minutes because
+the client waits rather than being rejected. That is the intended trade: waiting is
+recoverable, a 429 storm is not. Raise `LLM_REQUESTS_PER_MINUTE` to your tier's real
+limit if you have a higher one.
+
+### A question category is missing from a kit
+
+Look at the kit's events. A category that failed with a 429 or a 503 is recorded and the
+other categories still run, so the kit is thinner rather than absent. If it happens
+every time, `LLM_REQUESTS_PER_MINUTE` is set above what the key actually allows.
+
+### Public discussion never turns anything up
+
+The keyless fallback is DuckDuckGo's HTML endpoint, which is frequently slow or blocked
+from a datacentre address, so on a deployed instance it usually times out and is
+recorded as a skipped source. Set `BRAVE_API_KEY` — free for 2,000 queries a month — and
+the step starts returning results.
 
 ### The company site is never reached
 

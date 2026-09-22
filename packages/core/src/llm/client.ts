@@ -56,11 +56,11 @@ export class LlmClient {
 
   constructor(options: LlmClientOptions) {
     this.provider = options.provider;
-    this.attempts = options.attempts ?? 4;
+    this.attempts = options.attempts ?? 6;
     this.onTelemetry = options.onTelemetry;
     this.onRetry = options.onRetry;
     this.limiter = new RateLimiter({
-      requestsPerMinute: options.requestsPerMinute ?? 12,
+      requestsPerMinute: options.requestsPerMinute ?? 5,
       tokensPerMinute: options.tokensPerMinute ?? 200_000,
       maxConcurrent: options.maxConcurrent ?? 2,
       minGapMs: 250,

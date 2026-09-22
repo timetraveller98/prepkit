@@ -34,9 +34,9 @@ export async function withRetry<T>(
   operation: (attempt: number) => Promise<T>,
   options: RetryOptions = {},
 ): Promise<T> {
-  const attempts = options.attempts ?? 4;
+  const attempts = options.attempts ?? 6;
   const baseDelayMs = options.baseDelayMs ?? 800;
-  const maxDelayMs = options.maxDelayMs ?? 20_000;
+  const maxDelayMs = options.maxDelayMs ?? 30_000;
 
   let lastError: unknown;
   for (let attempt = 1; attempt <= attempts; attempt += 1) {
